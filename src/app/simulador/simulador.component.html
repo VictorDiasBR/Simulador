@@ -1,0 +1,119 @@
+<div class="grid-container">
+  <mat-grid-list cols="3" rowHeight="270px">
+    <mat-grid-tile
+      *ngFor="let card of cards | async"
+      [colspan]="1"
+      [rowspan]="1"
+    >
+      <mat-card class="dashboard-card">
+        <mat-card-content class="dashboard-card-content" Style="height:100%;">
+          <mat-grid-list cols="2" Style="width: 100%;" rowHeight="100%">
+            <mat-grid-tile>
+              <mat-grid-list cols="4" rowHeight="28px" Style="width: 100%;">
+                <mat-grid-tile
+                  *ngFor="let equip of card.equips"
+                  [colspan]="1"
+                  [rowspan]="1"
+                >
+                  <mat-icon
+                    [ngStyle]="{'background-color':equip.estado === 'on' ? '#90EE90' : '#FF7256' }"
+                    *ngIf="equip.tipo=='a'"
+                    style="
+                      border-radius: 50%;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                    >air</mat-icon
+                  >
+                  <mat-icon
+                    [ngStyle]="{'background-color':equip.estado === 'on' ? '#90EE90' : '#FF7256' }"
+                    *ngIf="equip.tipo=='c'"
+                    style="
+                      border-radius: 50%;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                    >computer</mat-icon
+                  >
+                  <mat-icon
+                    [ngStyle]="{'background-color':equip.estado === 'on' ? '#90EE90' : '#FF7256' }"
+                    *ngIf="equip.tipo=='p'"
+                    style="
+                      border-radius: 50%;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                    >cast_for_education</mat-icon
+                  >
+                  <mat-icon
+                    [ngStyle]="{'background-color':equip.estado === 'on' ? '#90EE90' : '#FF7256' }"
+                    *ngIf="equip.tipo=='l'"
+                    style="
+                      border-radius: 50%;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                    >light</mat-icon
+                  >
+                </mat-grid-tile>
+              </mat-grid-list>
+            </mat-grid-tile>
+
+            <mat-grid-tile>
+              <div style="font-family: Arial, Helvetica, sans-serif;">
+                <mat-chip-list
+                  class="mat-chip-list-stacked"
+                  aria-label="Color selection"
+                >
+                  <mat-list role="list">
+                    <mat-list-item>
+                      <mat-chip Style="font-weight: 900;"
+                        >{{card.title}}</mat-chip
+                      >
+                    </mat-list-item>
+                    <mat-list-item>
+                      <mat-chip
+                        ><mat-slide-toggle
+                          [(ngModel)]="checked1"
+                          class="example-margin"
+                          [color]="color"
+                        >
+                          <div *ngIf="checked1===true">Em aula!</div>
+                          <div *ngIf="checked1===false">Sem aula!</div>
+                        </mat-slide-toggle></mat-chip
+                      >
+                    </mat-list-item>
+                    <mat-list-item>
+                      <mat-chip>
+                        {{card.value}} Kw/h
+                      </mat-chip>
+                    </mat-list-item>
+                    <mat-list-item>
+                      <mat-chip
+                        ><mat-slide-toggle
+                          [(ngModel)]="checked"
+                          class="example-margin"
+                          [color]="color"
+                        >
+                          <div *ngIf="card.estado==='on'">Desativar</div>
+                          <div *ngIf="card.estado==='off'">Ativar</div>
+                        </mat-slide-toggle></mat-chip
+                      >
+                    </mat-list-item>
+                  </mat-list>
+                </mat-chip-list>
+              </div>
+            </mat-grid-tile>
+          </mat-grid-list>
+        </mat-card-content>
+        <button mat-icon-button class="more-button">
+          <mat-icon>open_in_new</mat-icon>
+        </button>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>
