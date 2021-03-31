@@ -1,7 +1,7 @@
 <div class="grid-container">
   <mat-grid-list cols="3" rowHeight="270px" *ngIf="cards">
     <mat-grid-tile
-      *ngFor="let card of cards | async"
+      *ngFor="let card of labs | async"
       [colspan]="1"
       [rowspan]="1"
     >
@@ -15,52 +15,75 @@
                   [colspan]="1"
                   [rowspan]="1"
                 >
-                  
+                  <button
+                    mat-button
+                    *ngIf="equip.tipo==='a'"
+                    (click)="editEquip(card.key,card,equip.id,equip.estado)"
+                  >
                     <mat-icon
-                      [ngStyle]="{'background-color':equip.estado === 'on' && card.estado === 'on' ? '#90EE90' : '#FF7256' }"
-                      *ngIf="equip.tipo=='a'"
+                      [ngStyle]="{'background-color':equip.estado === 'on' ? '#90EE90' : '#FF7256' }"
+                      *ngIf="equip.tipo==='a'"
                       style="
                         border-radius: 50%;
                         display: flex;
                         align-items: center;
                         justify-content: center;
                       "
-                      >air</mat-icon
                     >
-                 
-                  <mat-icon
-                    [ngStyle]="{'background-color':equip.estado === 'on' && card.estado === 'on' ? '#90EE90' : '#FF7256' }"
-                    *ngIf="equip.tipo=='c'"
-                    style="
-                      border-radius: 50%;
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                    "
-                    >computer</mat-icon
+                      air</mat-icon
+                    >
+                  </button>
+                  <button
+                    mat-button
+                    *ngIf="equip.tipo==='c'"
+                    (click)="editEquip(card.key,card,equip.id,equip.estado)"
                   >
-                  <mat-icon
-                    [ngStyle]="{'background-color':equip.estado === 'on' && card.estado === 'on' ? '#90EE90' : '#FF7256' }"
-                    *ngIf="equip.tipo=='p'"
-                    style="
-                      border-radius: 50%;
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                    "
-                    >cast_for_education</mat-icon
+                    <mat-icon
+                      [ngStyle]="{'background-color':equip.estado === 'on' ? '#90EE90' : '#FF7256' }"
+                      *ngIf="equip.tipo==='c'"
+                      style="
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                      "
+                      >computer</mat-icon
+                    >
+                  </button>
+                  <button
+                    mat-button
+                    *ngIf="equip.tipo==='p'"
+                    (click)="editEquip(card.key,card,equip.id,equip.estado)"
                   >
-                  <mat-icon
-                    [ngStyle]="{'background-color':equip.estado === 'on' && card.estado === 'on' ? '#90EE90' : '#FF7256' }"
-                    *ngIf="equip.tipo=='l'"
-                    style="
-                      border-radius: 50%;
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                    "
-                    >light</mat-icon
+                    <mat-icon
+                      [ngStyle]="{'background-color':equip.estado === 'on' ? '#90EE90' : '#FF7256' }"
+                      *ngIf="equip.tipo==='p'"
+                      style="
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                      "
+                      >cast_for_education</mat-icon
+                    >
+                  </button>
+                  <button
+                    mat-button
+                    *ngIf="equip.tipo==='l'"
+                    (click)="editEquip(card.key,card,equip.id,equip.estado)"
                   >
+                    <mat-icon
+                      [ngStyle]="{'background-color':equip.estado === 'on' ? '#90EE90' : '#FF7256' }"
+                      *ngIf="equip.tipo==='l'"
+                      style="
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                      "
+                      >light</mat-icon
+                    >
+                  </button>
                 </mat-grid-tile>
               </mat-grid-list>
             </mat-grid-tile>
@@ -83,7 +106,7 @@
                           [(ngModel)]="card.aula"
                           class="example-margin"
                           [color]="color"
-                          (click)="updateAulaLab(card.id,card.aula,card.estado)"
+                          (click)="editAula(card.key,card)"
                         >
                           <div *ngIf="card.aula===true">Em aula!</div>
                           <div *ngIf="card.aula===false">Sem aula!</div>
@@ -101,7 +124,7 @@
                           [ngModel]="card.estado=== 'on' ? true : false"
                           class="example-margin"
                           [color]="color"
-                          (click)="updateEstadoLab(card.id,card.estado,card.aula)"
+                          (click)="editLab(card.key,card)"
                         >
                           <div *ngIf="card.estado==='on'">Desativar</div>
                           <div *ngIf="card.estado==='off'">Ativar</div>

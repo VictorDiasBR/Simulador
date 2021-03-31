@@ -7,6 +7,8 @@ export const environment = {
   firebase: {
     apiKey: "AIzaSyAvEp67fLLuQBAtApvty-TSNdB4vePcWiM",
     authDomain: "simuladorconsumolaboratorios.firebaseapp.com",
+    databaseURL:
+      "https://simuladorconsumolaboratorios-default-rtdb.firebaseio.com",
     projectId: "simuladorconsumolaboratorios",
     storageBucket: "simuladorconsumolaboratorios.appspot.com",
     messagingSenderId: "110054588972",
