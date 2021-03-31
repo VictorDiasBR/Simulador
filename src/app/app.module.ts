@@ -8,23 +8,25 @@ import {
 import { NgxGaugeModule } from "ngx-gauge";
 
 import { HttpClientModule } from "@angular/common/http";
-import { AngularFireModule } from "@angular/fire";
+
 import { environment } from "../environments/environment";
-import { AngularFirestoreModule } from "@angular/fire/firestore";
+
+import { AngularFireModule } from "@angular/fire";
+import { AngularFireDatabaseModule } from "@angular/fire/database";
 
 import { AppComponent } from "./app.component";
 import { AppRoutingModule } from "./app-routing.module";
 import { SimuladorComponent } from "./simulador/simulador.component";
 import { FormsModule } from "@angular/forms";
 
-import { LabsService } from "./service/labs.service";
+import { LabDataService } from "./service/lab.data.service";
 @NgModule({
   declarations: [AppComponent, SimuladorComponent],
   imports: [
     BrowserModule,
     HttpClientModule,
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule,
+    AngularFireDatabaseModule,
     FormsModule,
     AppRoutingModule,
     MaterialModule,
@@ -32,7 +34,7 @@ import { LabsService } from "./service/labs.service";
     NoopAnimationsModule,
     NgxGaugeModule
   ],
-  providers: [LabsService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
