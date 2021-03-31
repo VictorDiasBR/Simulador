@@ -5,11 +5,12 @@ import {
   ChangeDetectionStrategy
 } from "@angular/core";
 import { map } from "rxjs/operators";
-import { FormControl, FormGroup } from "@angular/forms";
+
 import { Breakpoints, BreakpointObserver } from "@angular/cdk/layout";
 import { LabsService } from "../service/labs.service";
-import { Observable } from "rxjs";
+
 export interface Equip {
+  id: number;
   nome: string;
   tipo: string;
   estado: string;
@@ -19,6 +20,7 @@ export interface Lab {
   consumo: number;
   estado: string;
   equips: Equip[];
+  aula: boolean;
 }
 
 @Component({
@@ -40,51 +42,115 @@ export class SimuladorComponent implements OnInit {
   changed() {
     console.log(this.checked);
   }
-
+  mode = true;
   lab: any;
+
+  data: any;
   equips: Equip[] = [
-    { nome: "Ar Condicionado", tipo: "a", estado: "on" },
-    { nome: "Ar Condicionado", tipo: "a", estado: "off" },
-    { nome: "Ar Condicionado", tipo: "a", estado: "on" },
-    { nome: "Ar Condicionado", tipo: "a", estado: "off" },
-    { nome: "projetor", tipo: "p", estado: "on" },
-    { nome: "lampada", tipo: "l", estado: "on" },
-    { nome: "lampada", tipo: "l", estado: "off" },
-    { nome: "computador", tipo: "c", estado: "on" },
-    { nome: "computador", tipo: "c", estado: "on" },
-    { nome: "computador", tipo: "c", estado: "on" },
-    { nome: "computador", tipo: "c", estado: "on" },
-    { nome: "computador", tipo: "c", estado: "on" },
-    { nome: "computador", tipo: "c", estado: "on" },
-    { nome: "computador", tipo: "c", estado: "on" },
-    { nome: "computador", tipo: "c", estado: "on" },
-    { nome: "computador", tipo: "c", estado: "on" },
-    { nome: "computador", tipo: "c", estado: "on" },
-    { nome: "computador", tipo: "c", estado: "on" },
-    { nome: "computador", tipo: "c", estado: "off" },
-    { nome: "computador", tipo: "c", estado: "off" },
-    { nome: "computador", tipo: "c", estado: "off" },
-    { nome: "computador", tipo: "c", estado: "off" },
-    { nome: "computador", tipo: "c", estado: "off" },
-    { nome: "computador", tipo: "c", estado: "off" }
+    { id: 1, nome: "Ar Condicionado", tipo: "a", estado: "on" },
+    { id: 2, nome: "Ar Condicionado", tipo: "a", estado: "off" },
+    { id: 3, nome: "Ar Condicionado", tipo: "a", estado: "on" },
+    { id: 4, nome: "Ar Condicionado", tipo: "a", estado: "off" },
+    { id: 5, nome: "projetor", tipo: "p", estado: "on" },
+    { id: 6, nome: "lampada", tipo: "l", estado: "on" },
+    { id: 7, nome: "lampada", tipo: "l", estado: "off" },
+    { id: 8, nome: "computador", tipo: "c", estado: "on" },
+    { id: 9, nome: "computador", tipo: "c", estado: "on" },
+    { id: 10, nome: "computador", tipo: "c", estado: "on" },
+    { id: 11, nome: "computador", tipo: "c", estado: "on" },
+    { id: 12, nome: "computador", tipo: "c", estado: "on" },
+    { id: 13, nome: "computador", tipo: "c", estado: "on" },
+    { id: 14, nome: "computador", tipo: "c", estado: "on" },
+    { id: 15, nome: "computador", tipo: "c", estado: "on" },
+    { id: 16, nome: "computador", tipo: "c", estado: "on" },
+    { id: 17, nome: "computador", tipo: "c", estado: "on" },
+    { id: 18, nome: "computador", tipo: "c", estado: "on" },
+    { id: 19, nome: "computador", tipo: "c", estado: "off" },
+    { id: 20, nome: "computador", tipo: "c", estado: "off" },
+    { id: 21, nome: "computador", tipo: "c", estado: "off" },
+    { id: 22, nome: "computador", tipo: "c", estado: "off" },
+    { id: 23, nome: "computador", tipo: "c", estado: "off" },
+    { id: 24, nome: "computador", tipo: "c", estado: "off" }
   ];
   labs: Lab[] = [
-    { nome: "LAMI 1", consumo: 70.8, estado: "on", equips: this.equips },
-    { nome: "LAMI 2", consumo: 20.8, estado: "on", equips: this.equips },
-    { nome: "LAMI 3", consumo: 30.8, estado: "on", equips: this.equips },
-    { nome: "LAMI 4", consumo: 60.2, estado: "on", equips: this.equips },
-    { nome: "LAMI 5", consumo: 50.8, estado: "on", equips: this.equips },
-    { nome: "LAMI 6", consumo: 0, estado: "off", equips: this.equips },
-    { nome: "LAMI 7", consumo: 0, estado: "off", equips: this.equips },
-    { nome: "LAMI 8", consumo: 0, estado: "off", equips: this.equips },
-    { nome: "LAMI 9", consumo: 0, estado: "off", equips: this.equips },
-    { nome: "LAMI 10", consumo: 0, estado: "off", equips: this.equips }
+    {
+      nome: "LAMI 1",
+      consumo: 70.8,
+      estado: "on",
+      equips: this.equips,
+      aula: true
+    },
+    {
+      nome: "LAMI 2",
+      consumo: 20.8,
+      estado: "on",
+      equips: this.equips,
+      aula: true
+    },
+    {
+      nome: "LAMI 3",
+      consumo: 30.8,
+      estado: "on",
+      equips: this.equips,
+      aula: false
+    },
+    {
+      nome: "LAMI 4",
+      consumo: 60.2,
+      estado: "on",
+      equips: this.equips,
+      aula: false
+    },
+    {
+      nome: "LAMI 5",
+      consumo: 50.8,
+      estado: "on",
+      equips: this.equips,
+      aula: true
+    },
+    {
+      nome: "LAMI 6",
+      consumo: 90,
+      estado: "off",
+      equips: this.equips,
+      aula: false
+    },
+    {
+      nome: "LAMI 7",
+      consumo: 80,
+      estado: "off",
+      equips: this.equips,
+      aula: false
+    },
+    {
+      nome: "LAMI 8",
+      consumo: 70,
+      estado: "off",
+      equips: this.equips,
+      aula: false
+    },
+    {
+      nome: "LAMI 9",
+      consumo: 60,
+      estado: "off",
+      equips: this.equips,
+      aula: false
+    },
+    {
+      nome: "LAMI 10",
+      consumo: 60,
+      estado: "off",
+      equips: this.equips,
+      aula: false
+    }
   ];
 
   constructor(
     private breakpointObserver: BreakpointObserver,
-    public labsService: LabsService
-  ) {
+    public labsService: LabsService,
+    private changeDetector: ChangeDetectorRef
+  ) {}
+  ngOnInit() {
     this.labsService.listarLabs().subscribe((data) => {
       this.lab = data.map((e) => {
         return {
@@ -92,14 +158,15 @@ export class SimuladorComponent implements OnInit {
           nome: e.payload.doc.data()["nome"],
           consumo: e.payload.doc.data()["consumo"],
           estado: e.payload.doc.data()["estado"],
-          equips: e.payload.doc.data()["equips"]
+          equips: e.payload.doc.data()["equips"],
+          aula: e.payload.doc.data()["aula"]
         };
       });
-
       console.log(this.lab);
     });
+
+    this.changeDetector.markForCheck();
   }
-  ngOnInit() {}
   /** Based on the screen size, switch from standard to one column per row */
   cards = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
     map(({ matches }) => {
@@ -110,6 +177,7 @@ export class SimuladorComponent implements OnInit {
       return this.lab;
     })
   );
+
   criarLab() {
     let Lab = {};
 
@@ -137,6 +205,49 @@ export class SimuladorComponent implements OnInit {
     record["estado"] = "off";
     record["equips"] = this.equips;
     this.labsService.updateLab("RLduKIh7kHN1KiuIinCd", record);
+  }
+
+  updateEstadoLab(id, estado, aula) {
+    let record = {};
+
+    if (estado === "on" && aula === true) {
+      record["estado"] = "off";
+      record["aula"] = false;
+    } else if (estado === "off") {
+      record["estado"] = "on";
+    } else if (estado === "on") {
+      record["estado"] = "off";
+    }
+    this.labsService.updateLab(id, record);
+  }
+
+  updateAulaLab(id, aula, estado) {
+    let record = {};
+
+    if (aula === false && estado === "off") {
+      record["aula"] = true;
+      record["estado"] = "on";
+    } else if (aula === true) {
+      record["aula"] = false;
+    } else if (aula === false) {
+      record["aula"] = true;
+    }
+    this.labsService.updateLab(id, record);
+  }
+
+  updateEquipLab(lId, eId, equipEstado, labEstado) {
+    let record = {};
+
+    if (labEstado === "off" && equipEstado === "off") {
+      record["equips/estado"] = "on";
+      record["estado"] = "on";
+    } else if (equipEstado === "off") {
+      record["equips/estado"] = "on";
+    } else if (equipEstado === "on") {
+      record["equips/estado"] = "off";
+    }
+
+    this.labsService.updateEquip(lId, eId, record);
   }
 
   deleteLab() {

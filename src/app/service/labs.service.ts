@@ -18,6 +18,9 @@ export class LabsService {
   updateLab(labId, lab) {
     this.fireservices.doc("labs/" + labId).update(lab);
   }
+  updateEquip(labId, equipId, lab) {
+    this.fireservices.doc("labs/" + labId+"/equips/"+equipId).update(lab);
+  }
 
   deleteLab(labId) {
     this.fireservices.doc("labs/" + labId).delete();

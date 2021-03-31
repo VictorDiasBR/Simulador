@@ -1,6 +1,5 @@
-
 <div class="grid-container">
-  <mat-grid-list cols="3" rowHeight="270px">
+  <mat-grid-list cols="3" rowHeight="270px" *ngIf="cards">
     <mat-grid-tile
       *ngFor="let card of cards | async"
       [colspan]="1"
@@ -16,19 +15,21 @@
                   [colspan]="1"
                   [rowspan]="1"
                 >
+                  
+                    <mat-icon
+                      [ngStyle]="{'background-color':equip.estado === 'on' && card.estado === 'on' ? '#90EE90' : '#FF7256' }"
+                      *ngIf="equip.tipo=='a'"
+                      style="
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                      "
+                      >air</mat-icon
+                    >
+                 
                   <mat-icon
-                    [ngStyle]="{'background-color':equip.estado === 'on' ? '#90EE90' : '#FF7256' }"
-                    *ngIf="equip.tipo=='a'"
-                    style="
-                      border-radius: 50%;
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                    "
-                    >air</mat-icon
-                  >
-                  <mat-icon
-                    [ngStyle]="{'background-color':equip.estado === 'on' ? '#90EE90' : '#FF7256' }"
+                    [ngStyle]="{'background-color':equip.estado === 'on' && card.estado === 'on' ? '#90EE90' : '#FF7256' }"
                     *ngIf="equip.tipo=='c'"
                     style="
                       border-radius: 50%;
@@ -39,7 +40,7 @@
                     >computer</mat-icon
                   >
                   <mat-icon
-                    [ngStyle]="{'background-color':equip.estado === 'on' ? '#90EE90' : '#FF7256' }"
+                    [ngStyle]="{'background-color':equip.estado === 'on' && card.estado === 'on' ? '#90EE90' : '#FF7256' }"
                     *ngIf="equip.tipo=='p'"
                     style="
                       border-radius: 50%;
@@ -50,7 +51,7 @@
                     >cast_for_education</mat-icon
                   >
                   <mat-icon
-                    [ngStyle]="{'background-color':equip.estado === 'on' ? '#90EE90' : '#FF7256' }"
+                    [ngStyle]="{'background-color':equip.estado === 'on' && card.estado === 'on' ? '#90EE90' : '#FF7256' }"
                     *ngIf="equip.tipo=='l'"
                     style="
                       border-radius: 50%;
@@ -79,12 +80,13 @@
                     <mat-list-item>
                       <mat-chip
                         ><mat-slide-toggle
-                          [(ngModel)]="checked1"
+                          [(ngModel)]="card.aula"
                           class="example-margin"
                           [color]="color"
+                          (click)="updateAulaLab(card.id,card.aula,card.estado)"
                         >
-                          <div *ngIf="checked1===true">Em aula!</div>
-                          <div *ngIf="checked1===false">Sem aula!</div>
+                          <div *ngIf="card.aula===true">Em aula!</div>
+                          <div *ngIf="card.aula===false">Sem aula!</div>
                         </mat-slide-toggle></mat-chip
                       >
                     </mat-list-item>
@@ -96,9 +98,10 @@
                     <mat-list-item>
                       <mat-chip
                         ><mat-slide-toggle
-                          [(ngModel)]="checked"
+                          [ngModel]="card.estado=== 'on' ? true : false"
                           class="example-margin"
                           [color]="color"
+                          (click)="updateEstadoLab(card.id,card.estado,card.aula)"
                         >
                           <div *ngIf="card.estado==='on'">Desativar</div>
                           <div *ngIf="card.estado==='off'">Ativar</div>
