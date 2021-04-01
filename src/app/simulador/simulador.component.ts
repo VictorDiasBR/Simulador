@@ -7,7 +7,6 @@ import { LabDataService } from "../service/lab.data.service";
 import { Lab, Equip } from "../service/lab";
 import { Observable } from "rxjs";
 import { JanelaComponent } from "./janela/janela.component";
-
 @Component({
   selector: "app-simulador",
   templateUrl: "./simulador.component.html",
