@@ -20,8 +20,15 @@ import { SimuladorComponent } from "./simulador/simulador.component";
 import { FormsModule } from "@angular/forms";
 
 import { LabDataService } from "./service/lab.data.service";
+import { JanelaComponent } from "./simulador/janela/janela.component";
+import { ContentComponent } from "./simulador/janela/content/content.component";
 @NgModule({
-  declarations: [AppComponent, SimuladorComponent],
+  declarations: [
+    AppComponent,
+    SimuladorComponent,
+    JanelaComponent,
+    ContentComponent
+  ],
   imports: [
     BrowserModule,
     HttpClientModule,

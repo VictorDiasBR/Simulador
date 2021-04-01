@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from "@angular/core";
+import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
 import { map } from "rxjs/operators";
 
 import { Breakpoints, BreakpointObserver } from "@angular/cdk/layout";
@@ -6,6 +6,7 @@ import { LabService } from "../service/lab.service";
 import { LabDataService } from "../service/lab.data.service";
 import { Lab, Equip } from "../service/lab";
 import { Observable } from "rxjs";
+import { JanelaComponent } from "./janela/janela.component";
 
 @Component({
   selector: "app-simulador",
@@ -39,6 +40,8 @@ export class SimuladorComponent implements OnInit, AfterViewInit {
     private labService: LabService,
     private labDataService: LabDataService
   ) {}
+  @ViewChild(JanelaComponent, { static: false })
+  janela: JanelaComponent;
 
   ngOnInit() {
     this.labs = this.labService.getAll();

@@ -1,0 +1,40 @@
+<mat-tab-group>
+  <mat-tab label="Dados Laboratório">
+    <div class="example-action-buttons">
+      <button mat-button (click)="accordion.openAll()">Expand All</button>
+      <button mat-button (click)="accordion.closeAll()">Collapse All</button>
+    </div>
+    <mat-accordion Style="height: 200px" class="example-headers-align" multi>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            nome
+          </mat-panel-title>
+          <mat-panel-description>
+            Laboratório
+            <mat-icon>account_circle</mat-icon>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <mat-form-field>
+          <mat-label>First name</mat-label>
+          <input matInput />
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Age</mat-label>
+          <input matInput type="number" min="1" />
+        </mat-form-field>
+        <mat-action-row>
+          <button mat-button color="warn" (click)="editLab(lab.key,lab)">
+            Salvar
+          </button>
+        </mat-action-row>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </mat-tab>
+
+  <div *ngFor="let equip of lab.equips | async">
+    <mat-tab label="equip.nome"> </mat-tab>
+  </div>
+</mat-tab-group>

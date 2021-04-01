@@ -137,9 +137,18 @@
             </mat-grid-tile>
           </mat-grid-list>
         </mat-card-content>
-        <button mat-icon-button class="more-button">
-          <mat-icon>open_in_new</mat-icon>
-        </button>
+        <div>
+          <button
+            mat-icon-button
+            class="more-button"
+            
+            (click)="janela.openDialog(card.key)"
+          >
+            <mat-icon>open_in_new</mat-icon>
+          </button>
+          <app-janela #janela>
+          </app-janela>
+        </div>
       </mat-card>
     </mat-grid-tile>
   </mat-grid-list>
