@@ -6,11 +6,7 @@
   >
     <mat-tab-group>
       <mat-tab label="Laboratório">
-        <mat-accordion
-          Style="height: 200px"
-          class="example-headers-align"
-          multi
-        >
+        <mat-accordion class="example-headers-align" multi>
           <mat-expansion-panel>
             <mat-expansion-panel-header>
               <mat-panel-title>
@@ -23,16 +19,31 @@
             </mat-expansion-panel-header>
 
             <mat-form-field>
-              <mat-label>First name</mat-label>
-              <input matInput />
+              <mat-label>Nome:</mat-label>
+              <input matInput value="{{lab.nome}}" #nomeLab />
             </mat-form-field>
 
             <mat-form-field>
-              <mat-label>Age</mat-label>
-              <input matInput type="number" min="1" />
+              <mat-label>Consumo(Kw/h):</mat-label>
+              <input matInput value="{{lab.consumo}}" #consumoLab />
             </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Estado do Lab:</mat-label>
+              <input matInput value="{{lab.estado}}" #estadoLab />
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Aula:</mat-label>
+              <input matInput value="{{lab.aula}}" #aulaLab />
+            </mat-form-field>
+
             <mat-action-row>
-              <button mat-button color="warn" (click)="editLab(lab.key,lab)">
+              <button
+                mat-button
+                color="warn"
+                (click)="editLab(lab.key,lab,nomeLab.value,consumoLab.value,estadoLab.value,aulaLab.value)"
+              >
                 Salvar
               </button>
             </mat-action-row>
@@ -41,11 +52,7 @@
       </mat-tab>
       <div *ngFor="let equip of equips">
         <mat-tab label="{{equip}}">
-          <mat-accordion
-            Style="height: 200px"
-            class="example-headers-align"
-            multi
-          >
+          <mat-accordion class="example-headers-align" multi>
             <div *ngFor="let equipamento of lab.equips">
               <div *ngIf="equipamento.nome=== equip">
                 <mat-expansion-panel>
@@ -60,19 +67,30 @@
                   </mat-expansion-panel-header>
 
                   <mat-form-field>
-                    <mat-label>First name</mat-label>
-                    <input matInput />
+                    <mat-label>Id:</mat-label>
+                    <input matInput value="{{equipamento.id}}" #id />
                   </mat-form-field>
 
                   <mat-form-field>
-                    <mat-label>Age</mat-label>
-                    <input matInput type="number" min="1" />
+                    <mat-label>Nome:</mat-label>
+                    <input matInput value="{{equipamento.nome}}" #nome />
                   </mat-form-field>
+
+                  <mat-form-field>
+                    <mat-label>Estado:</mat-label>
+                    <input matInput value="{{equipamento.estado}}" #estado />
+                  </mat-form-field>
+
+                  <mat-form-field>
+                    <mat-label> Tipo:</mat-label>
+                    <input matInput value="{{equipamento.tipo}}" #tipo />
+                  </mat-form-field>
+
                   <mat-action-row>
                     <button
                       mat-button
                       color="warn"
-                      (click)="editLab(lab.key,lab)"
+                      (click)="editEquip(lab.key,lab,id.value,nome.value,estado.value,tipo.value,equipamento.id)"
                     >
                       Salvar
                     </button>

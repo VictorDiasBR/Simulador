@@ -31,10 +31,17 @@ export class JanelaComponent implements OnInit, AfterViewInit, OnDestroy {
   key: string = "";
   equips: any;
 
-  equipsA: any;
-  equipsC: any;
-  equipsP: any;
-  equipsL: any;
+  edit: string = "";
+  idEquip: string = "";
+  nomeEquip: string = "";
+  estadoEquip: string = "";
+  tipoEquip: string = "";
+  idEquipAnt: string = "";
+
+  nomeLab: string = "";
+  estadoLab: string = "";
+  consumoLab: string = "";
+  aulaLab: string = "";
 
   constructor(
     private _overlay: Overlay,
@@ -83,8 +90,35 @@ export class JanelaComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         });
         this.equips = nomesEquips;
+        this.key = data.key;
       }
-      this.key = data.key;
+      if (data.lab && data.key && this.edit === "equip") {
+        for (const i of data.lab.equips) {
+          if (i.id === this.idEquipAnt) {
+            i.id = this.idEquip;
+            i.nome = this.nomeEquip;
+            i.estado = this.estadoEquip;
+            i.tipo = this.tipoEquip;
+          }
+        }
+        this.lab.equips = data.lab.equips;
+        this.key = data.key;
+        this.labService.update(this.lab, this.key);
+        this.edit = "";
+      } else if (data.lab && data.key && this.edit === "lab") {
+        data.lab.nome = this.nomeLab;
+        data.lab.estado = this.estadoLab;
+        data.lab.consumo = this.consumoLab;
+        if (this.aulaLab === "true") {
+          data.lab.aula = true;
+        } else if (this.aulaLab === "false") {
+          data.lab.aula = false;
+        }
+        this.lab = data.lab;
+        this.key = data.key;
+        this.labService.update(this.lab, this.key);
+        this.edit = "";
+      }
     });
   }
 
@@ -94,6 +128,34 @@ export class JanelaComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openDialog(key: string, lab: Lab) {
     this._overlayRef.attach(this._portal);
+    this.labDataService.changeLab(lab, key);
+  }
+  editEquip(
+    key: string,
+    lab: Lab,
+    idEquip: string,
+    nome: string,
+    estado: string,
+    tipo: string,
+    idEquipAnt: string
+  ) {
+    this.idEquip = idEquip;
+    this.nomeEquip = nome;
+    this.estadoEquip = estado;
+    this.tipoEquip = tipo;
+    this.idEquipAnt = idEquipAnt;
+    this.edit = "equip";
+
+    this.labDataService.changeLab(lab, key);
+  }
+
+  editLab(key: string, lab: Lab, nome, consumo, estado, aula) {
+    this.nomeLab = nome;
+    this.estadoLab = estado;
+    this.consumoLab = consumo;
+    this.aulaLab = aula;
+    this.edit = "lab";
+
     this.labDataService.changeLab(lab, key);
   }
 }

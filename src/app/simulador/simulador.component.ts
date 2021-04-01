@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  OnInit,
+  ViewChild,
+  OnDestroy
+} from "@angular/core";
 import { map } from "rxjs/operators";
 
 import { Breakpoints, BreakpointObserver } from "@angular/cdk/layout";
@@ -49,6 +55,7 @@ export class SimuladorComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.labDataService.currentLab.subscribe((data) => {
+      this.lab = new Lab();
       if (data.lab && data.key && this.edit === "equip") {
         if (this.estadoEquip === "off") {
           for (const i of data.lab.equips) {
@@ -69,6 +76,7 @@ export class SimuladorComponent implements OnInit, AfterViewInit {
         this.lab.equips = data.lab.equips;
         this.key = data.key;
         this.labService.update(this.lab, this.key);
+        this.edit = "";
       } else if (data.lab && data.key && this.edit === "lab") {
         if (data.lab.estado === "on" && data.lab.aula === true) {
           this.lab.estado = "off";
@@ -88,19 +96,24 @@ export class SimuladorComponent implements OnInit, AfterViewInit {
         this.key = data.key;
 
         this.labService.update(this.lab, this.key);
+        this.edit = "";
       } else if (data.lab && data.key && this.edit === "aula") {
         if (data.lab.aula === false && data.lab.estado === "off") {
           this.lab.aula = true;
           this.lab.estado = "on";
+          console.log("editAula - 1");
         } else if (data.lab.aula === true) {
           this.lab.aula = false;
+          console.log("editAula - 2");
         } else if (data.lab.aula === false) {
           this.lab.aula = true;
+          console.log("editAula - 3");
         }
 
         this.key = data.key;
 
         this.labService.update(this.lab, this.key);
+        this.edit = "";
       }
     });
   }
