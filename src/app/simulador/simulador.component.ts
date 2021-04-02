@@ -1,10 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  OnInit,
-  ViewChild,
-  OnDestroy
-} from "@angular/core";
+import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
 import { map } from "rxjs/operators";
 
 import { Breakpoints, BreakpointObserver } from "@angular/cdk/layout";
@@ -13,12 +7,25 @@ import { LabDataService } from "../service/lab.data.service";
 import { Lab, Equip } from "../service/lab";
 import { Observable } from "rxjs";
 import { JanelaComponent } from "./janela/janela.component";
+import { MatDialog } from "@angular/material/dialog";
+import {
+  getSupportedInputTypes,
+  Platform,
+  supportsPassiveEventListeners,
+  supportsScrollBehavior
+} from "@angular/cdk/platform";
 @Component({
   selector: "app-simulador",
   templateUrl: "./simulador.component.html",
   styleUrls: ["./simulador.component.css"]
 })
 export class SimuladorComponent implements OnInit, AfterViewInit {
+  supportedInputTypes = Array.from(getSupportedInputTypes()).join(", ");
+  supportsPassiveEventListeners = supportsPassiveEventListeners();
+  supportsScrollBehavior = supportsScrollBehavior();
+
+  colsA: any;
+  larguraCard: any;
   gaugeType = "semi";
   gaugeconsumo = 60.3;
   gaugeLabel = "Speed";
@@ -43,12 +50,21 @@ export class SimuladorComponent implements OnInit, AfterViewInit {
   constructor(
     private breakpointObserver: BreakpointObserver,
     private labService: LabService,
-    private labDataService: LabDataService
+    private labDataService: LabDataService,
+    public platform: Platform,
+    public dialog: MatDialog
   ) {}
   @ViewChild(JanelaComponent, { static: false })
   janela: JanelaComponent;
 
   ngOnInit() {
+    if (this.platform.ANDROID || this.platform.IOS) {
+      this.colsA = 1;
+      this.larguraCard = "87";
+    } else if (this.platform.BLINK) {
+      this.colsA = 3;
+      this.larguraCard = "82";
+    }
     this.labs = this.labService.getAll();
     this.lab = new Lab();
   }
@@ -150,4 +166,10 @@ export class SimuladorComponent implements OnInit, AfterViewInit {
   }
 
   deleteLab() {}
+
+  openDialog(key: string, lab: Lab) {
+    this.dialog.open(JanelaComponent);
+
+    this.labDataService.changeLab(lab, key);
+  }
 }

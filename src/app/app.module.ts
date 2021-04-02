@@ -6,24 +6,28 @@ import {
   NoopAnimationsModule
 } from "@angular/platform-browser/animations";
 import { NgxGaugeModule } from "ngx-gauge";
-
 import { HttpClientModule } from "@angular/common/http";
-
 import { environment } from "../environments/environment";
-
 import { AngularFireModule } from "@angular/fire";
 import { AngularFireDatabaseModule } from "@angular/fire/database";
+import { PlatformModule } from "@angular/cdk/platform";
+import { ScrollingModule } from "@angular/cdk/scrolling";
+import { LayoutModule } from "@angular/cdk/layout";
 
 import { AppComponent } from "./app.component";
 import { AppRoutingModule } from "./app-routing.module";
 import { SimuladorComponent } from "./simulador/simulador.component";
 import { FormsModule } from "@angular/forms";
-
+import { ReactiveFormsModule } from "@angular/forms";
 import { LabDataService } from "./service/lab.data.service";
 import { JanelaComponent } from "./simulador/janela/janela.component";
 @NgModule({
   declarations: [AppComponent, SimuladorComponent, JanelaComponent],
   imports: [
+    LayoutModule,
+    ScrollingModule,
+    ReactiveFormsModule,
+    PlatformModule,
     BrowserModule,
     HttpClientModule,
     AngularFireModule.initializeApp(environment.firebase),

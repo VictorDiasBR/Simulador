@@ -1,106 +1,103 @@
-<ng-template>
-  <div
-    class="example-dialog-content"
-    cdkDrag
-    cdkDragRootElement=".cdk-overlay-pane"
-  >
-    <mat-tab-group>
-      <mat-tab label="Laboratório">
+<mat-dialog-content class="mat-typography">
+  <mat-tab-group>
+    <mat-tab label="Laboratório">
+      <mat-accordion class="example-headers-align" multi>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{lab.nome}}
+            </mat-panel-title>
+            <mat-panel-description>
+              {{lab.estado}}
+              <mat-icon>account_circle</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-form-field>
+            <mat-label>Nome:</mat-label>
+            <input matInput value="{{lab.nome}}" #nomeLab />
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Consumo(Kw/h):</mat-label>
+            <input matInput value="{{lab.consumo}}" #consumoLab />
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Estado do Lab:</mat-label>
+            <input matInput value="{{lab.estado}}" #estadoLab />
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Aula:</mat-label>
+            <input matInput value="{{lab.aula}}" #aulaLab />
+          </mat-form-field>
+
+          <mat-action-row>
+            <button
+              mat-button
+              color="warn"
+              (click)="editLab(lab.key,lab,nomeLab.value,consumoLab.value,estadoLab.value,aulaLab.value)"
+            >
+              Salvar
+            </button>
+          </mat-action-row>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-tab>
+    <div *ngFor="let equip of equips">
+      <mat-tab label="{{equip}}">
         <mat-accordion class="example-headers-align" multi>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                {{lab.nome}}
-              </mat-panel-title>
-              <mat-panel-description>
-                {{lab.estado}}
-                <mat-icon>account_circle</mat-icon>
-              </mat-panel-description>
-            </mat-expansion-panel-header>
+          <div *ngFor="let equipamento of lab.equips">
+            <div *ngIf="equipamento.nome=== equip">
+              <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    {{equipamento.nome}}
+                  </mat-panel-title>
+                  <mat-panel-description>
+                    {{equipamento.estado}}
+                    <mat-icon>account_circle</mat-icon>
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
 
-            <mat-form-field>
-              <mat-label>Nome:</mat-label>
-              <input matInput value="{{lab.nome}}" #nomeLab />
-            </mat-form-field>
+                <mat-form-field>
+                  <mat-label>Id:</mat-label>
+                  <input matInput value="{{equipamento.id}}" #id />
+                </mat-form-field>
 
-            <mat-form-field>
-              <mat-label>Consumo(Kw/h):</mat-label>
-              <input matInput value="{{lab.consumo}}" #consumoLab />
-            </mat-form-field>
+                <mat-form-field>
+                  <mat-label>Nome:</mat-label>
+                  <input matInput value="{{equipamento.nome}}" #nome />
+                </mat-form-field>
 
-            <mat-form-field>
-              <mat-label>Estado do Lab:</mat-label>
-              <input matInput value="{{lab.estado}}" #estadoLab />
-            </mat-form-field>
+                <mat-form-field>
+                  <mat-label>Estado:</mat-label>
+                  <input matInput value="{{equipamento.estado}}" #estado />
+                </mat-form-field>
 
-            <mat-form-field>
-              <mat-label>Aula:</mat-label>
-              <input matInput value="{{lab.aula}}" #aulaLab />
-            </mat-form-field>
+                <mat-form-field>
+                  <mat-label> Tipo:</mat-label>
+                  <input matInput value="{{equipamento.tipo}}" #tipo />
+                </mat-form-field>
 
-            <mat-action-row>
-              <button
-                mat-button
-                color="warn"
-                (click)="editLab(lab.key,lab,nomeLab.value,consumoLab.value,estadoLab.value,aulaLab.value)"
-              >
-                Salvar
-              </button>
-            </mat-action-row>
-          </mat-expansion-panel>
+                <mat-action-row>
+                  <button
+                    mat-button
+                    color="warn"
+                    (click)="editEquip(lab.key,lab,id.value,nome.value,estado.value,tipo.value,equipamento.id)"
+                  >
+                    Salvar
+                  </button>
+                </mat-action-row>
+              </mat-expansion-panel>
+            </div>
+          </div>
         </mat-accordion>
       </mat-tab>
-      <div *ngFor="let equip of equips">
-        <mat-tab label="{{equip}}">
-          <mat-accordion class="example-headers-align" multi>
-            <div *ngFor="let equipamento of lab.equips">
-              <div *ngIf="equipamento.nome=== equip">
-                <mat-expansion-panel>
-                  <mat-expansion-panel-header>
-                    <mat-panel-title>
-                      {{equipamento.nome}}
-                    </mat-panel-title>
-                    <mat-panel-description>
-                      {{equipamento.estado}}
-                      <mat-icon>account_circle</mat-icon>
-                    </mat-panel-description>
-                  </mat-expansion-panel-header>
-
-                  <mat-form-field>
-                    <mat-label>Id:</mat-label>
-                    <input matInput value="{{equipamento.id}}" #id />
-                  </mat-form-field>
-
-                  <mat-form-field>
-                    <mat-label>Nome:</mat-label>
-                    <input matInput value="{{equipamento.nome}}" #nome />
-                  </mat-form-field>
-
-                  <mat-form-field>
-                    <mat-label>Estado:</mat-label>
-                    <input matInput value="{{equipamento.estado}}" #estado />
-                  </mat-form-field>
-
-                  <mat-form-field>
-                    <mat-label> Tipo:</mat-label>
-                    <input matInput value="{{equipamento.tipo}}" #tipo />
-                  </mat-form-field>
-
-                  <mat-action-row>
-                    <button
-                      mat-button
-                      color="warn"
-                      (click)="editEquip(lab.key,lab,id.value,nome.value,estado.value,tipo.value,equipamento.id)"
-                    >
-                      Salvar
-                    </button>
-                  </mat-action-row>
-                </mat-expansion-panel>
-              </div>
-            </div>
-          </mat-accordion>
-        </mat-tab>
-      </div>
-    </mat-tab-group>
-  </div>
-</ng-template>
+    </div>
+  </mat-tab-group>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Fechar</button>
+</mat-dialog-actions>

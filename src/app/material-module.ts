@@ -46,11 +46,9 @@ import { PortalModule } from "@angular/cdk/portal";
 import { CdkStepperModule } from "@angular/cdk/stepper";
 import { CdkTableModule } from "@angular/cdk/table";
 import { CdkTreeModule } from "@angular/cdk/tree";
-import { LayoutModule } from "@angular/cdk/layout";
 
 @NgModule({
   imports: [
-    LayoutModule,
     ClipboardModule,
     CdkStepperModule,
     CdkTableModule,

@@ -5,7 +5,8 @@ import {
   AfterViewInit,
   ViewContainerRef,
   OnDestroy,
-  OnInit
+  OnInit,
+  ChangeDetectionStrategy
 } from "@angular/core";
 import { Overlay, OverlayRef } from "@angular/cdk/overlay";
 import { TemplatePortal } from "@angular/cdk/portal";
@@ -14,11 +15,13 @@ import { LabDataService } from "../../service/lab.data.service";
 import { Lab, Equip } from "../../service/lab";
 import { Observable } from "rxjs";
 import { MatAccordion } from "@angular/material/expansion";
+import { MatDialog } from "@angular/material/dialog";
 
 @Component({
   selector: "app-janela",
   templateUrl: "./janela.component.html",
-  styleUrls: ["./janela.component.css"]
+  styleUrls: ["./janela.component.css"],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class JanelaComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(TemplateRef) _dialogTemplate: TemplateRef<any>;
@@ -47,27 +50,14 @@ export class JanelaComponent implements OnInit, AfterViewInit, OnDestroy {
     private _overlay: Overlay,
     private _viewContainerRef: ViewContainerRef,
     private labService: LabService,
-    private labDataService: LabDataService
+    private labDataService: LabDataService,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
     this.lab = new Lab();
   }
   ngAfterViewInit() {
-    this._portal = new TemplatePortal(
-      this._dialogTemplate,
-      this._viewContainerRef
-    );
-    this._overlayRef = this._overlay.create({
-      positionStrategy: this._overlay
-        .position()
-        .global()
-        .centerHorizontally()
-        .centerVertically(),
-      hasBackdrop: true
-    });
-    this._overlayRef.backdropClick().subscribe(() => this._overlayRef.detach());
-
     this.labDataService.currentLab.subscribe((data) => {
       if (data.lab && data.key) {
         this.lab = data.lab;
@@ -109,7 +99,10 @@ export class JanelaComponent implements OnInit, AfterViewInit, OnDestroy {
         data.lab.nome = this.nomeLab;
         data.lab.estado = this.estadoLab;
         data.lab.consumo = this.consumoLab;
-        if (this.aulaLab === "true") {
+        if (this.aulaLab === "true" && data.lab.estado === "false") {
+          data.lab.aula = true;
+          data.lab.estado = true;
+        } else if (this.aulaLab === "true") {
           data.lab.aula = true;
         } else if (this.aulaLab === "false") {
           data.lab.aula = false;
@@ -122,14 +115,6 @@ export class JanelaComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
-    this._overlayRef.dispose();
-  }
-
-  openDialog(key: string, lab: Lab) {
-    this._overlayRef.attach(this._portal);
-    this.labDataService.changeLab(lab, key);
-  }
   editEquip(
     key: string,
     lab: Lab,
