@@ -12,7 +12,7 @@ import { AngularFireModule } from "@angular/fire";
 import { AngularFireDatabaseModule } from "@angular/fire/database";
 import { PlatformModule } from "@angular/cdk/platform";
 import { ScrollingModule } from "@angular/cdk/scrolling";
-import { LayoutModule } from "@angular/cdk/layout";
+import { FlexLayoutModule } from "@angular/flex-layout";
 
 import { AppComponent } from "./app.component";
 import { AppRoutingModule } from "./app-routing.module";
@@ -24,7 +24,7 @@ import { JanelaComponent } from "./simulador/janela/janela.component";
 @NgModule({
   declarations: [AppComponent, SimuladorComponent, JanelaComponent],
   imports: [
-    LayoutModule,
+    FlexLayoutModule,
     ScrollingModule,
     ReactiveFormsModule,
     PlatformModule,

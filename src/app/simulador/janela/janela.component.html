@@ -1,4 +1,4 @@
-<mat-dialog-content class="mat-typography">
+<mat-dialog-content class="mat-typography" Style="padding: 0px">
   <mat-tab-group>
     <mat-tab label="Laboratório">
       <mat-accordion class="example-headers-align" multi>
@@ -84,7 +84,6 @@
                 <mat-action-row>
                   <button
                     mat-button
-                    color="warn"
                     (click)="editEquip(lab.key,lab,id.value,nome.value,estado.value,tipo.value,equipamento.id)"
                   >
                     Salvar
@@ -99,5 +98,5 @@
   </mat-tab-group>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Fechar</button>
+  <button mat-button color="warn" mat-dialog-close>Fechar</button>
 </mat-dialog-actions>

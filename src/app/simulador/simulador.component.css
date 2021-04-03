@@ -1,12 +1,12 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 .grid-container {
   margin: 2%;
+  padding: 16px;
 }
 
 .dashboard-card {
-  position: absolute;
   height: 190px;
-  width: 350px;
+  width: 90%;
 
   border: 5px solid #ccc;
 }

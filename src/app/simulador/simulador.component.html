@@ -1,157 +1,160 @@
 <div class="grid-container">
-  <div>
-    <mat-grid-list cols="{{colsA}}" rowHeight="270px">
-      <mat-grid-tile
-        *ngFor="let card of labs | async"
-        [colspan]="1"
-        [rowspan]="1"
-      >
-        <mat-card class="dashboard-card" [style.width.%]="larguraCard">
-          <mat-card-content class="dashboard-card-content" Style="height:100%;">
-            <mat-grid-list cols="2" Style="width: 100%;" rowHeight="100%">
-              <mat-grid-tile>
-                <mat-grid-list cols="4" rowHeight="28px" Style="width: 100%;">
-                  <mat-grid-tile
-                    *ngFor="let equip of card.equips"
-                    [colspan]="1"
-                    [rowspan]="1"
+  <div
+    fxLayout="row wrap"
+    fxLayoutGap="24px grid"
+    fxLayoutAlign="center center"
+  >
+    <div
+      [fxFlex]="(100/3)+ '%'"
+      fxFlex.xs="100%"
+      fxFlex.sm="50%"
+      *ngFor="let card of labs | async"
+    >
+      <mat-card class="dashboard-card">
+        <mat-card-content class="dashboard-card-content" Style="height:100%;">
+          <mat-grid-list cols="2" Style="width: 100%;" rowHeight="100%">
+            <mat-grid-tile>
+              <mat-grid-list cols="4" rowHeight="28px" Style="width: 100%;">
+                <mat-grid-tile
+                  *ngFor="let equip of card.equips"
+                  [colspan]="1"
+                  [rowspan]="1"
+                >
+                  <button
+                    mat-button
+                    *ngIf="equip.tipo==='a'"
+                    (click)="editEquip(card.key,card,equip.id,equip.estado)"
                   >
-                    <button
-                      mat-button
+                    <mat-icon
+                      [ngStyle]="{'background-color':equip.estado === 'on' ? '#90EE90' : '#FF7256' }"
                       *ngIf="equip.tipo==='a'"
-                      (click)="editEquip(card.key,card,equip.id,equip.estado)"
+                      style="
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                      "
                     >
-                      <mat-icon
-                        [ngStyle]="{'background-color':equip.estado === 'on' ? '#90EE90' : '#FF7256' }"
-                        *ngIf="equip.tipo==='a'"
-                        style="
-                          border-radius: 50%;
-                          display: flex;
-                          align-items: center;
-                          justify-content: center;
-                        "
-                      >
-                        air</mat-icon
-                      >
-                    </button>
-                    <button
-                      mat-button
-                      *ngIf="equip.tipo==='c'"
-                      (click)="editEquip(card.key,card,equip.id,equip.estado)"
+                      air</mat-icon
                     >
-                      <mat-icon
-                        [ngStyle]="{'background-color':equip.estado === 'on' ? '#90EE90' : '#FF7256' }"
-                        *ngIf="equip.tipo==='c'"
-                        style="
-                          border-radius: 50%;
-                          display: flex;
-                          align-items: center;
-                          justify-content: center;
-                        "
-                        >computer</mat-icon
-                      >
-                    </button>
-                    <button
-                      mat-button
-                      *ngIf="equip.tipo==='p'"
-                      (click)="editEquip(card.key,card,equip.id,equip.estado)"
-                    >
-                      <mat-icon
-                        [ngStyle]="{'background-color':equip.estado === 'on' ? '#90EE90' : '#FF7256' }"
-                        *ngIf="equip.tipo==='p'"
-                        style="
-                          border-radius: 50%;
-                          display: flex;
-                          align-items: center;
-                          justify-content: center;
-                        "
-                        >cast_for_education</mat-icon
-                      >
-                    </button>
-                    <button
-                      mat-button
-                      *ngIf="equip.tipo==='l'"
-                      (click)="editEquip(card.key,card,equip.id,equip.estado)"
-                    >
-                      <mat-icon
-                        [ngStyle]="{'background-color':equip.estado === 'on' ? '#90EE90' : '#FF7256' }"
-                        *ngIf="equip.tipo==='l'"
-                        style="
-                          border-radius: 50%;
-                          display: flex;
-                          align-items: center;
-                          justify-content: center;
-                        "
-                        >light</mat-icon
-                      >
-                    </button>
-                  </mat-grid-tile>
-                </mat-grid-list>
-              </mat-grid-tile>
-
-              <mat-grid-tile>
-                <div style="font-family: Arial, Helvetica, sans-serif;">
-                  <mat-chip-list
-                    class="mat-chip-list-stacked"
-                    aria-label="Color selection"
+                  </button>
+                  <button
+                    mat-button
+                    *ngIf="equip.tipo==='c'"
+                    (click)="editEquip(card.key,card,equip.id,equip.estado)"
                   >
-                    <mat-list role="list">
-                      <mat-list-item>
-                        <mat-chip Style="font-weight: 900;"
-                          >{{card.nome}}</mat-chip
+                    <mat-icon
+                      [ngStyle]="{'background-color':equip.estado === 'on' ? '#90EE90' : '#FF7256' }"
+                      *ngIf="equip.tipo==='c'"
+                      style="
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                      "
+                      >computer</mat-icon
+                    >
+                  </button>
+                  <button
+                    mat-button
+                    *ngIf="equip.tipo==='p'"
+                    (click)="editEquip(card.key,card,equip.id,equip.estado)"
+                  >
+                    <mat-icon
+                      [ngStyle]="{'background-color':equip.estado === 'on' ? '#90EE90' : '#FF7256' }"
+                      *ngIf="equip.tipo==='p'"
+                      style="
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                      "
+                      >cast_for_education</mat-icon
+                    >
+                  </button>
+                  <button
+                    mat-button
+                    *ngIf="equip.tipo==='l'"
+                    (click)="editEquip(card.key,card,equip.id,equip.estado)"
+                  >
+                    <mat-icon
+                      [ngStyle]="{'background-color':equip.estado === 'on' ? '#90EE90' : '#FF7256' }"
+                      *ngIf="equip.tipo==='l'"
+                      style="
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                      "
+                      >light</mat-icon
+                    >
+                  </button>
+                </mat-grid-tile>
+              </mat-grid-list>
+            </mat-grid-tile>
+
+            <mat-grid-tile>
+              <div style="font-family: Arial, Helvetica, sans-serif;">
+                <mat-chip-list
+                  class="mat-chip-list-stacked"
+                  aria-label="Color selection"
+                >
+                  <mat-list role="list">
+                    <mat-list-item>
+                      <mat-chip Style="font-weight: 900;"
+                        >{{card.nome}}</mat-chip
+                      >
+                    </mat-list-item>
+                    <mat-list-item>
+                      <mat-chip
+                        ><mat-slide-toggle
+                          [(ngModel)]="card.aula"
+                          class="example-margin"
+                          [color]="color"
+                          (click)="editAula(card.key,card)"
                         >
-                      </mat-list-item>
-                      <mat-list-item>
-                        <mat-chip
-                          ><mat-slide-toggle
-                            [(ngModel)]="card.aula"
-                            class="example-margin"
-                            [color]="color"
-                            (click)="editAula(card.key,card)"
-                          >
-                            <div *ngIf="card.aula===true">Em aula!</div>
-                            <div *ngIf="card.aula===false">Sem aula!</div>
-                          </mat-slide-toggle></mat-chip
+                          <div *ngIf="card.aula===true">Em aula!</div>
+                          <div *ngIf="card.aula===false">Sem aula!</div>
+                        </mat-slide-toggle></mat-chip
+                      >
+                    </mat-list-item>
+                    <mat-list-item>
+                      <mat-chip>
+                        {{card.consumo}} Kw/h
+                      </mat-chip>
+                    </mat-list-item>
+                    <mat-list-item>
+                      <mat-chip
+                        ><mat-slide-toggle
+                          [ngModel]="card.estado=== 'on' ? true : false"
+                          class="example-margin"
+                          [color]="color"
+                          (click)="editLab(card.key,card)"
                         >
-                      </mat-list-item>
-                      <mat-list-item>
-                        <mat-chip>
-                          {{card.consumo}} Kw/h
-                        </mat-chip>
-                      </mat-list-item>
-                      <mat-list-item>
-                        <mat-chip
-                          ><mat-slide-toggle
-                            [ngModel]="card.estado=== 'on' ? true : false"
-                            class="example-margin"
-                            [color]="color"
-                            (click)="editLab(card.key,card)"
-                          >
-                            <div *ngIf="card.estado==='on'">Desativar</div>
-                            <div *ngIf="card.estado==='off'">Ativar</div>
-                          </mat-slide-toggle></mat-chip
-                        >
-                      </mat-list-item>
-                    </mat-list>
-                  </mat-chip-list>
-                </div>
-              </mat-grid-tile>
-            </mat-grid-list>
-          </mat-card-content>
-          <div>
-            <button
-              mat-icon-button
-              class="more-button"
-              (click)="openDialog(card.key,card)"
-            >
-              <mat-icon>open_in_new</mat-icon>
-            </button>
-          </div>
-        </mat-card>
-      </mat-grid-tile>
-    </mat-grid-list>
+                          <div *ngIf="card.estado==='on'">Desativar</div>
+                          <div *ngIf="card.estado==='off'">Ativar</div>
+                        </mat-slide-toggle></mat-chip
+                      >
+                    </mat-list-item>
+                  </mat-list>
+                </mat-chip-list>
+              </div>
+            </mat-grid-tile>
+          </mat-grid-list>
+        </mat-card-content>
+        <div>
+          <button
+            mat-icon-button
+            class="more-button"
+            (click)="openDialog(card.key,card)"
+          >
+            <mat-icon>open_in_new</mat-icon>
+          </button>
+        </div>
+      </mat-card>
+    </div>
   </div>
 </div>
 <div style="display: none;">
-  <app-janela> </app-janela>
+  <app-janela Style="width: 100%"> </app-janela>
 </div>

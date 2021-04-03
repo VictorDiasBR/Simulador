@@ -1,37 +1,17 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
-import { map } from "rxjs/operators";
-
-import { Breakpoints, BreakpointObserver } from "@angular/cdk/layout";
 import { LabService } from "../service/lab.service";
 import { LabDataService } from "../service/lab.data.service";
 import { Lab, Equip } from "../service/lab";
 import { Observable } from "rxjs";
 import { JanelaComponent } from "./janela/janela.component";
 import { MatDialog } from "@angular/material/dialog";
-import {
-  getSupportedInputTypes,
-  Platform,
-  supportsPassiveEventListeners,
-  supportsScrollBehavior
-} from "@angular/cdk/platform";
+
 @Component({
   selector: "app-simulador",
   templateUrl: "./simulador.component.html",
   styleUrls: ["./simulador.component.css"]
 })
 export class SimuladorComponent implements OnInit, AfterViewInit {
-  supportedInputTypes = Array.from(getSupportedInputTypes()).join(", ");
-  supportsPassiveEventListeners = supportsPassiveEventListeners();
-  supportsScrollBehavior = supportsScrollBehavior();
-
-  colsA: any;
-  larguraCard: any;
-  gaugeType = "semi";
-  gaugeconsumo = 60.3;
-  gaugeLabel = "Speed";
-  gaugeAppendText = "kw/hr";
-  size = 150;
-
   color = "#90EE90";
   checked = true;
   checked1 = false;
@@ -48,23 +28,14 @@ export class SimuladorComponent implements OnInit, AfterViewInit {
   edit: string = "";
 
   constructor(
-    private breakpointObserver: BreakpointObserver,
     private labService: LabService,
     private labDataService: LabDataService,
-    public platform: Platform,
     public dialog: MatDialog
   ) {}
   @ViewChild(JanelaComponent, { static: false })
   janela: JanelaComponent;
 
   ngOnInit() {
-    if (this.platform.ANDROID || this.platform.IOS) {
-      this.colsA = 1;
-      this.larguraCard = "87";
-    } else if (this.platform.BLINK) {
-      this.colsA = 3;
-      this.larguraCard = "82";
-    }
     this.labs = this.labService.getAll();
     this.lab = new Lab();
   }
@@ -133,16 +104,6 @@ export class SimuladorComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  /** Based on the screen size, switch from standard to one column per row */
-  cards = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
-    map(({ matches }) => {
-      if (matches) {
-        return this.labs;
-      }
-
-      return this.labs;
-    })
-  );
 
   criarLab() {
     this.labs.forEach((element) => {
