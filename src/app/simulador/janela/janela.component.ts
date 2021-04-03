@@ -4,7 +4,6 @@ import {
   TemplateRef,
   AfterViewInit,
   ViewContainerRef,
-  OnDestroy,
   OnInit,
   ChangeDetectionStrategy
 } from "@angular/core";
@@ -23,7 +22,7 @@ import { MatDialog } from "@angular/material/dialog";
   styleUrls: ["./janela.component.css"],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class JanelaComponent implements OnInit, AfterViewInit, OnDestroy {
+export class JanelaComponent implements OnInit, AfterViewInit {
   @ViewChild(TemplateRef) _dialogTemplate: TemplateRef<any>;
   private _overlayRef: OverlayRef;
   private _portal: TemplatePortal;
