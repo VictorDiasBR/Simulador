@@ -1,0 +1,29 @@
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+.grid-container {
+  margin: 2%;
+  padding: 16px;
+}
+
+.dashboard-card {
+  height: 190px;
+  width: 90%;
+
+  border: 5px solid #ccc;
+}
+
+.more-button {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+.dashboard-card-content {
+  text-align: center;
+}
+
+mat-spinner {
+  width: 300px;
+  height: 300px;
+  margin-top: 250px;
+  margin-left: 580px;
+}

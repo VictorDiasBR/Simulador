@@ -21,8 +21,9 @@ import { FormsModule } from "@angular/forms";
 import { ReactiveFormsModule } from "@angular/forms";
 import { LabDataService } from "./service/lab.data.service";
 import { JanelaComponent } from "./simulador/janela/janela.component";
+import { UiControleComponent } from './simulador/ui-controle/ui-controle.component';
 @NgModule({
-  declarations: [AppComponent, SimuladorComponent, JanelaComponent],
+  declarations: [AppComponent, SimuladorComponent, JanelaComponent, UiControleComponent],
   imports: [
     FlexLayoutModule,
     ScrollingModule,
