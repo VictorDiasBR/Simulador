@@ -18,8 +18,7 @@ import { STEPPER_GLOBAL_OPTIONS } from "@angular/cdk/stepper";
   styleUrls: ["./simulador.component.css"],
   providers: [
     {
-      provide: STEPPER_GLOBAL_OPTIONS,
-      useValue: { displayDefaultIndicatorType: false }
+      provide: STEPPER_GLOBAL_OPTIONS, useValue: {showError: true}
     }
   ]
 })

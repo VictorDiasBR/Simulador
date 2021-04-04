@@ -1,8 +1,6 @@
 import { NgModule } from "@angular/core";
 import {
-  MAT_LABEL_GLOBAL_OPTIONS,
-  MatNativeDateModule,
-  MAT_DATE_LOCALE
+  MatNativeDateModule
 } from "@angular/material/core";
 
 import { MatIconRegistry } from "@angular/material/icon";

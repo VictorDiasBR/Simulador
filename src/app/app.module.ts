@@ -5,7 +5,7 @@ import {
   BrowserAnimationsModule,
   NoopAnimationsModule
 } from "@angular/platform-browser/animations";
-import { NgxGaugeModule } from "ngx-gauge";
+
 import { HttpClientModule } from "@angular/common/http";
 import { environment } from "../environments/environment";
 import { AngularFireModule } from "@angular/fire";
@@ -19,11 +19,15 @@ import { AppRoutingModule } from "./app-routing.module";
 import { SimuladorComponent } from "./simulador/simulador.component";
 import { FormsModule } from "@angular/forms";
 import { ReactiveFormsModule } from "@angular/forms";
-import { LabDataService } from "./service/lab.data.service";
 import { JanelaComponent } from "./simulador/janela/janela.component";
-import { UiControleComponent } from './simulador/ui-controle/ui-controle.component';
+import { UiControleComponent } from "./simulador/ui-controle/ui-controle.component";
 @NgModule({
-  declarations: [AppComponent, SimuladorComponent, JanelaComponent, UiControleComponent],
+  declarations: [
+    AppComponent,
+    SimuladorComponent,
+    JanelaComponent,
+    UiControleComponent
+  ],
   imports: [
     FlexLayoutModule,
     ScrollingModule,
@@ -37,8 +41,7 @@ import { UiControleComponent } from './simulador/ui-controle/ui-controle.compone
     AppRoutingModule,
     MaterialModule,
     BrowserAnimationsModule,
-    NoopAnimationsModule,
-    NgxGaugeModule
+    NoopAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
