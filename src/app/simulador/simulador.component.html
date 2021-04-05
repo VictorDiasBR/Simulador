@@ -3,58 +3,160 @@
     ><app-ui-controle></app-ui-controle
   ></mat-tab>
   <mat-tab label="Simulador">
-    <mat-horizontal-stepper #stepper>
-      <mat-step [stepControl]="firstFormGroup" errorMessage="Name is required.">
-        <form [formGroup]="firstFormGroup">
-          <ng-template matStepLabel>Fill out your name</ng-template>
-          <mat-form-field>
-            <mat-label>Name</mat-label>
-            <input
-              matInput
-              placeholder="Last name, First name"
-              formControlName="firstCtrl"
-              required
-            />
-          </mat-form-field>
-          <div>
-            <p>Go to a different step to see the error state</p>
-            <button mat-button matStepperNext>Next</button>
-          </div>
-        </form>
-      </mat-step>
-      <mat-step
-        [stepControl]="secondFormGroup"
-        errorMessage="Address is required."
-      >
-        <form [formGroup]="secondFormGroup">
-          <ng-template matStepLabel>Fill out your address</ng-template>
-          <mat-form-field appearance="fill">
-            <mat-label>Enter a date range</mat-label>
-            <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
-              <input matStartDate formControlName="start" placeholder="Start date">
-              <input matEndDate formControlName="end" placeholder="End date">
-            </mat-date-range-input>
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-date-range-picker #picker></mat-date-range-picker>
-          
-            <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
-            <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
-          </mat-form-field>
-          <div>
-            <p>Go to a different step to see the error state</p>
-            <button mat-button matStepperPrevious>Back</button>
-            <button mat-button matStepperNext>Next</button>
-          </div>
-        </form>
-      </mat-step>
-      <mat-step>
-        <ng-template matStepLabel>Done</ng-template>
-        <p>You are now done.</p>
+    <mat-vertical-stepper #stepper>
+      <mat-step [stepControl]="dadosIniciais" errorMessage="Name is required.">
+        <mat-grid-list #grid [cols]="cols" rowHeight="2:1"  >
+          <mat-grid-tile>
+            <form [formGroup]="dadosIniciais" class="example-container">
+              <ng-template matStepLabel>Dados iniciais!</ng-template>
+              <mat-form-field>
+                <mat-label>Nome:</mat-label>
+                <input
+                  matInput
+                  placeholder="Last name, First name"
+                  formControlName="nome"
+                  required
+                />
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>Descrição:</mat-label>
+                <input matInput placeholder="" formControlName="descricao" />
+              </mat-form-field>
+            </form>
+          </mat-grid-tile>
+          <mat-grid-tile
+            >Texto Explicando os campos! Teste - {{dadosIniciais.value|json}}
+          </mat-grid-tile>
+        </mat-grid-list>
         <div>
-          <button mat-button matStepperPrevious>Back</button>
-          <button mat-button (click)="stepper.reset()">Reset</button>
+          <button mat-raised-button color="primary" matStepperNext>Next</button>
         </div>
       </mat-step>
-    </mat-horizontal-stepper>
+      <mat-step [stepControl]="tipo" errorMessage="Defina o Tipo de Simulação!">
+        <mat-grid-list #grid [cols]="cols" rowHeight="2:1">
+          <mat-grid-tile>
+            <div class="example-container">
+              <form [formGroup]="tipo">
+                <ng-template matStepLabel>Tipo de Simulação!</ng-template>
+                <div>
+                  <label>Tipo de Simulação: </label>
+                  <mat-radio-group formControlName="tipo">
+                    <mat-radio-button value="tReal"
+                      >Tempo Real</mat-radio-button
+                    >
+                    <mat-radio-button value="tSimulado"
+                      >Tempo Simulado</mat-radio-button
+                    >
+                  </mat-radio-group>
+                </div>
+              </form>
+            </div>
+          </mat-grid-tile>
+          <mat-grid-tile>
+            Texto Explicando os campos! Teste - {{tipo.value | json}}
+          </mat-grid-tile>
+        </mat-grid-list>
+
+        <div>
+          <button mat-raised-button color="primary" matStepperPrevious>
+            Back
+          </button>
+          <button mat-raised-button color="primary" class="ajust" matStepperNext>Next</button>
+        </div>
+      </mat-step>
+      <mat-step [stepControl]="periodo" errorMessage="Informe o período!">
+        <mat-grid-list #grid [cols]="cols" rowHeight="2:1">
+          <mat-grid-tile>
+            <mat-form-field [formGroup]="periodo">
+              <ng-template matStepLabel>Período de Simulação!</ng-template>
+              <mat-label>Período:</mat-label>
+              <mat-date-range-input [rangePicker]="picker">
+                <input
+                  matStartDate
+                  placeholder="Início"
+                  formControlName="inicio"
+                />
+                <input matEndDate placeholder="Fim" formControlName="fim" />
+              </mat-date-range-input>
+              <mat-datepicker-toggle
+                matSuffix
+                [for]="picker"
+              ></mat-datepicker-toggle>
+              <mat-date-range-picker #picker></mat-date-range-picker>
+            </mat-form-field>
+          </mat-grid-tile>
+          <mat-grid-tile>
+            Texto Explicando os campos! Teste - {{periodo.value | json}}
+          </mat-grid-tile>
+        </mat-grid-list>
+
+        <div>
+          <button mat-raised-button color="primary" matStepperPrevious>
+            Back
+          </button>
+          <button mat-raised-button color="primary" class="ajust" matStepperNext>Next</button>
+        </div>
+      </mat-step>
+
+      <mat-step
+        [stepControl]="modelo"
+        errorMessage="Defina o modelo de Simulação!"
+      >
+        <mat-grid-list #grid [cols]="cols" rowHeight="2:1">
+          <mat-grid-tile>
+            <div class="example-container">
+              <form [formGroup]="modelo">
+                <ng-template matStepLabel>Modelo de Simulação!</ng-template>
+                <div>
+                  <label>Modelo de Simulação: </label>
+                  <mat-radio-group formControlName="modelo">
+                    <mat-radio-button value="estatica"
+                      >Estática</mat-radio-button
+                    >
+                    <mat-radio-button value="dinamica"
+                      >Dinâmica
+                    </mat-radio-button>
+                  </mat-radio-group>
+                </div>
+              </form>
+            </div>
+          </mat-grid-tile>
+          <mat-grid-tile>
+            Texto Explicando os campos! Teste - {{modelo.value|json}}
+          </mat-grid-tile>
+        </mat-grid-list>
+
+        <div>
+          <button mat-raised-button color="primary" matStepperPrevious>
+            Back
+          </button>
+          <button mat-raised-button color="primary" class="ajust" matStepperNext>Next</button>
+        </div>
+      </mat-step>
+      <mat-step>
+        <mat-grid-list #grid [cols]="cols" rowHeight="2:1">
+          <mat-grid-tile>
+            <ng-template matStepLabel>Done</ng-template>
+            <p>You are now done.</p>
+          </mat-grid-tile>
+          <mat-grid-tile
+            >Texto explicando a pós-finalização do processo!</mat-grid-tile
+          >
+        </mat-grid-list>
+        <div>
+          <button mat-raised-button color="primary" matStepperPrevious>
+            Back
+          </button>
+          <button mat-raised-button color="primary" class="ajust"(click)="stepper.reset()">
+            Reset
+          </button>
+          <div fxLayoutAlign="center center">
+          <button mat-raised-button color="primary" class="ajust">
+              Iniciar Simulação
+            </button>
+          </div>
+        </div>
+      </mat-step>
+    </mat-vertical-stepper>
   </mat-tab>
 </mat-tab-group>
