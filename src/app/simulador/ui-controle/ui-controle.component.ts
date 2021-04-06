@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit} from "@angular/core";
+import { AfterViewInit, Component, OnInit } from "@angular/core";
 import { LabService } from "../../service/lab.service";
 import { LabDataService } from "../../service/lab.data.service";
 import { Lab, Equip } from "../../service/lab";
@@ -7,9 +7,9 @@ import { JanelaComponent } from "../janela/janela.component";
 import { MatDialog } from "@angular/material/dialog";
 
 @Component({
-  selector: 'app-ui-controle',
-  templateUrl: './ui-controle.component.html',
-  styleUrls: ['./ui-controle.component.css']
+  selector: "app-ui-controle",
+  templateUrl: "./ui-controle.component.html",
+  styleUrls: ["./ui-controle.component.css"]
 })
 export class UiControleComponent implements OnInit, AfterViewInit {
   color = "#90EE90";
@@ -19,6 +19,7 @@ export class UiControleComponent implements OnInit, AfterViewInit {
   mode = true;
 
   labs: Observable<any>;
+
   lab: Lab;
   key: string = "";
   equip: Equip[];
@@ -32,7 +33,7 @@ export class UiControleComponent implements OnInit, AfterViewInit {
     private labDataService: LabDataService,
     public dialog: MatDialog
   ) {}
- 
+
   ngOnInit() {
     this.labs = this.labService.getAll();
     this.lab = new Lab();
@@ -131,5 +132,4 @@ export class UiControleComponent implements OnInit, AfterViewInit {
 
     this.labDataService.changeLab(lab, key);
   }
-
 }

@@ -3,6 +3,7 @@ export class Equip {
   nome: string;
   tipo: string;
   estado: string;
+  potencia: number;
 }
 export class Lab {
   nome: string;

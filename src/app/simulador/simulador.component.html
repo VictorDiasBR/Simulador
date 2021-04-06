@@ -3,14 +3,14 @@
     ><app-ui-controle></app-ui-controle
   ></mat-tab>
   <mat-tab label="Simulador">
-    <mat-vertical-stepper #stepper>
-      <mat-step [stepControl]="dadosIniciais" errorMessage="Name is required.">
+    <mat-vertical-stepper [linear]="'Disable linear mode'" #stepper>
+      <mat-step [stepControl]="dadosIniciais" errorMessage="Name is required." >
         <mat-grid-list #grid [cols]="cols" rowHeight="2:1"  >
           <mat-grid-tile>
             <form [formGroup]="dadosIniciais" class="example-container">
               <ng-template matStepLabel>Dados iniciais!</ng-template>
               <mat-form-field>
-                <mat-label>Nome:</mat-label>
+                <mat-label>Título:</mat-label>
                 <input
                   matInput
                   placeholder="Last name, First name"
@@ -32,14 +32,14 @@
           <button mat-raised-button color="primary" matStepperNext>Next</button>
         </div>
       </mat-step>
-      <mat-step [stepControl]="tipo" errorMessage="Defina o Tipo de Simulação!">
+      <mat-step [stepControl]="tipo" errorMessage="Defina o Tipo de Simulação!" >
         <mat-grid-list #grid [cols]="cols" rowHeight="2:1">
           <mat-grid-tile>
             <div class="example-container">
               <form [formGroup]="tipo">
-                <ng-template matStepLabel>Tipo de Simulação!</ng-template>
+                <ng-template matStepLabel>Modalidade de Tempo!</ng-template>
                 <div>
-                  <label>Tipo de Simulação: </label>
+                  <label>Modalidade de Tempo: </label>
                   <mat-radio-group formControlName="tipo">
                     <mat-radio-button value="tReal"
                       >Tempo Real</mat-radio-button
@@ -64,7 +64,7 @@
           <button mat-raised-button color="primary" class="ajust" matStepperNext>Next</button>
         </div>
       </mat-step>
-      <mat-step [stepControl]="periodo" errorMessage="Informe o período!">
+      <mat-step [stepControl]="periodo" errorMessage="Informe o período!" >
         <mat-grid-list #grid [cols]="cols" rowHeight="2:1">
           <mat-grid-tile>
             <mat-form-field [formGroup]="periodo">
@@ -100,7 +100,7 @@
 
       <mat-step
         [stepControl]="modelo"
-        errorMessage="Defina o modelo de Simulação!"
+        errorMessage="Defina o modelo de Simulação!" 
       >
         <mat-grid-list #grid [cols]="cols" rowHeight="2:1">
           <mat-grid-tile>
@@ -151,7 +151,7 @@
             Reset
           </button>
           <div fxLayoutAlign="center center">
-          <button mat-raised-button color="primary" class="ajust">
+          <button mat-raised-button color="primary" class="ajust" (click)="simular(dadosIniciais.value,tipo.value,periodo.value,modelo.value)">
               Iniciar Simulação
             </button>
           </div>
