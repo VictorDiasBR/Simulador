@@ -4,8 +4,8 @@
   ></mat-tab>
   <mat-tab label="Simulador">
     <mat-vertical-stepper [linear]="'Disable linear mode'" #stepper>
-      <mat-step [stepControl]="dadosIniciais" errorMessage="Name is required." >
-        <mat-grid-list #grid [cols]="cols" rowHeight="2:1"  >
+      <mat-step [stepControl]="dadosIniciais" errorMessage="Name is required.">
+        <mat-grid-list #grid [cols]="cols" rowHeight="2:1">
           <mat-grid-tile>
             <form [formGroup]="dadosIniciais" class="example-container">
               <ng-template matStepLabel>Dados iniciais!</ng-template>
@@ -32,7 +32,7 @@
           <button mat-raised-button color="primary" matStepperNext>Next</button>
         </div>
       </mat-step>
-      <mat-step [stepControl]="tipo" errorMessage="Defina o Tipo de Simulação!" >
+      <mat-step [stepControl]="tipo" errorMessage="Defina o Tipo de Simulação!">
         <mat-grid-list #grid [cols]="cols" rowHeight="2:1">
           <mat-grid-tile>
             <div class="example-container">
@@ -61,10 +61,17 @@
           <button mat-raised-button color="primary" matStepperPrevious>
             Back
           </button>
-          <button mat-raised-button color="primary" class="ajust" matStepperNext>Next</button>
+          <button
+            mat-raised-button
+            color="primary"
+            class="ajust"
+            matStepperNext
+          >
+            Next
+          </button>
         </div>
       </mat-step>
-      <mat-step [stepControl]="periodo" errorMessage="Informe o período!" >
+      <mat-step [stepControl]="periodo" errorMessage="Informe o período!">
         <mat-grid-list #grid [cols]="cols" rowHeight="2:1">
           <mat-grid-tile>
             <mat-form-field [formGroup]="periodo">
@@ -94,13 +101,20 @@
           <button mat-raised-button color="primary" matStepperPrevious>
             Back
           </button>
-          <button mat-raised-button color="primary" class="ajust" matStepperNext>Next</button>
+          <button
+            mat-raised-button
+            color="primary"
+            class="ajust"
+            matStepperNext
+          >
+            Next
+          </button>
         </div>
       </mat-step>
 
       <mat-step
         [stepControl]="modelo"
-        errorMessage="Defina o modelo de Simulação!" 
+        errorMessage="Defina o modelo de Simulação!"
       >
         <mat-grid-list #grid [cols]="cols" rowHeight="2:1">
           <mat-grid-tile>
@@ -130,14 +144,38 @@
           <button mat-raised-button color="primary" matStepperPrevious>
             Back
           </button>
-          <button mat-raised-button color="primary" class="ajust" matStepperNext>Next</button>
+          <button
+            mat-raised-button
+            color="primary"
+            class="ajust"
+            matStepperNext
+          >
+            Next
+          </button>
         </div>
       </mat-step>
       <mat-step>
         <mat-grid-list #grid [cols]="cols" rowHeight="2:1">
           <mat-grid-tile>
-            <ng-template matStepLabel>Done</ng-template>
-            <p>You are now done.</p>
+            <ng-template matStepLabel>Ajustes Finais!</ng-template>
+            <div class="example-container">
+              <form [formGroup]="snapshot">
+                <div>
+                  <mat-radio-group
+                    formControlName="snapshot"
+                  >
+                    <label>Base de dados: </label>
+                      <mat-radio-button value="snapshotUi"
+                        >Snapshot da UI.</mat-radio-button
+                      >
+                      <mat-radio-button value="snapShotOn">
+                        Todos equipamentos ligados.
+                      </mat-radio-button>
+                    
+                  </mat-radio-group>
+                </div>
+              </form>
+            </div>
           </mat-grid-tile>
           <mat-grid-tile
             >Texto explicando a pós-finalização do processo!</mat-grid-tile
@@ -145,13 +183,23 @@
         </mat-grid-list>
         <div>
           <button mat-raised-button color="primary" matStepperPrevious>
-            Back
+            Voltar
           </button>
-          <button mat-raised-button color="primary" class="ajust"(click)="stepper.reset()">
-            Reset
+          <button
+            mat-raised-button
+            color="primary"
+            class="ajust"
+            (click)="stepper.reset()"
+          >
+            Resetar
           </button>
           <div fxLayoutAlign="center center">
-          <button mat-raised-button color="primary" class="ajust" (click)="simular(dadosIniciais.value,tipo.value,periodo.value,modelo.value)">
+            <button
+              mat-raised-button
+              color="primary"
+              class="ajust"
+              (click)="simular(dadosIniciais.value,tipo.value,periodo.value,modelo.value,snapshot.value)"
+            >
               Iniciar Simulação
             </button>
           </div>

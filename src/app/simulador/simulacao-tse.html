@@ -9,26 +9,23 @@
   >
     <div>
       <h2>Horas de uso por equipamento</h2>
-      <div
-        fxLayout="row"
-        fxLayoutGap="16px"
-        fxLayout.xs="column"
-        fxLayoutAlign="center center"
-        fxLayoutAlign.xs="center stretch"
-        class="row-example"
-        *ngFor="let equip of equips"
-      >
-        <h1>{{equip.nome}}</h1>
-        <mat-slider
-          thumbLabel
-          [displayWith]="formatLabel"
-          min="1"
-          max="24"
-          name="horas"
-          [(ngModel)]="equip.horas"
-          (ngModelChange)="onChange($event,equip.id)"
-        ></mat-slider>
-      </div>
+      <table>
+        <tr *ngFor="let equip of equips">
+          <td>{{equip.nome}}</td>
+          <td>
+            <mat-slider
+              thumbLabel
+              [displayWith]="formatLabel"
+              min="1"
+              max="24"
+              name="horas"
+              [(ngModel)]="equip.horas"
+              (ngModelChange)="onChange($event,equip.id)"
+            >
+            </mat-slider>
+          </td>
+        </tr>
+      </table>
     </div>
     <div>
       <table mat-table [dataSource]="equips" class="mat-elevation-z8">
@@ -73,7 +70,7 @@
         <!-- Cost Description Column -->
         <ng-container matColumnDef="horas-description">
           <th mat-header-cell *matHeaderCellDef>
-            Horas de uso dos tipos de equipamentos por dia.
+            Horas de uso dos equipamentos por dia.
           </th>
         </ng-container>
 
