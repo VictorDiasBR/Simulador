@@ -99,15 +99,27 @@ export class SimuladorComponent implements OnInit {
   }
 
   simular(dados, tipo, periodo, modelo, snapshot) {
-    this.dialog.open(SimulacaoTSE, {
-      data: {
-        dados: dados,
-        tipo: tipo,
-        periodo: periodo,
-        modelo: modelo,
-        snapshot: snapshot
-      }
-    });
+    if (tipo.tipo === "tSimulado") {
+      this.dialog.open(SimulacaoTSE, {
+        data: {
+          dados: dados,
+          tipo: tipo,
+          periodo: periodo,
+          modelo: modelo,
+          snapshot: snapshot
+        }
+      });
+    } else if (tipo.tipo === "tReal" && modelo.modelo === "dinamica") {
+      this.dialog.open(SimulacaoTRD, {
+        data: {
+          dados: dados,
+          tipo: tipo,
+          periodo: periodo,
+          modelo: modelo,
+          snapshot: snapshot
+        }
+      });
+    }
   }
 }
 
@@ -238,5 +250,56 @@ export class SimulacaoTSE implements OnInit, AfterViewInit {
       .map((t) => t.custoTotal)
       .reduce((acc, value) => acc + value, 0)
       .toFixed(2);
+  }
+}
+
+@Component({
+  selector: "simulacao-trd",
+  templateUrl: "./simulacao-trd.html",
+  styleUrls: ["./simulacao-trd.css"]
+})
+export class SimulacaoTRD implements OnInit {
+  simulacao: any;
+  labs: Observable<any>;
+  equips: Item[] = [];
+  diasDiff: any;
+
+  bandeira = 0.5;
+  dataInicio: any;
+  dataFim: any;
+
+  exe: any;
+
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: SimuacaoTSE,
+    private labService: LabService,
+    private labDataService: LabDataService
+  ) {
+    this.simulacao = data;
+  }
+
+  ngOnInit() {
+    this.labs = this.labService.getAll();
+  }
+
+  iniciarSimulacao() {
+    if (this.exe === true) {
+      setInterval(() => {}, 1000);
+    }
+    var monteCarlo = function () {
+      // We do this “forever” until we find a qualifying random value.
+      while (true) {
+        // Pick a random value.
+        var r1 = Math.random();
+        // Assign a probability.
+        var probability = r1;
+        // Pick a second random value.
+        var r2 = Math.random();
+        // Does it qualify? If so, we’re done!
+        if (r2 < probability) {
+          return r1;
+        }
+      }
+    };
   }
 }
