@@ -1,0 +1,89 @@
+<h2 mat-dialog-title>Definir probabilidades:(Opcional)</h2>
+
+<div mat-dialog-content>
+  <div
+    fxLayout="row"
+    fxLayoutAlign="start none"
+    fxLayoutGap="16px"
+    *ngFor="let regra of regras | async"
+  >
+    <mat-card class="dashboard-card">
+      <mat-card-content class="dashboard-card-content" Style="height:100%;">
+        <form fxLayout="row" fxLayoutGap="10px">
+          <mat-form-field appearance="fill">
+            <mat-label>Laboratório:</mat-label>
+            <mat-select value="{{regra.laboratorio}}" #laboratorio>
+              <mat-option *ngFor="let lab of labs | async" value="{{lab.nome}}">
+                {{lab.nome}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Estado do Lami:</mat-label>
+            <mat-select value="{{regra.estadoLab}}" #estado>
+              <mat-option value="true">
+                Em aula!
+              </mat-option>
+              <mat-option value="false">
+                Sem aula!
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Equipamento:</mat-label>
+            <mat-select value="{{regra.equipamento}}" #equipamento>
+              <mat-option
+                *ngFor="let equip of nomesEquipsLab"
+                value="{{equip}}"
+              >
+                {{equip}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Probabilidade de uso do Equipamento:</mat-label>
+            <input
+              matInput
+              type="number"
+              min="0"
+              max="100"
+              value="{{regra.probEquip}}"
+              #probEquip
+            />
+          </mat-form-field>
+        </form>
+      </mat-card-content>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="salvarRegra(regra.key,regra,laboratorio.value,estado.value,equipamento.value,probEquip.value)"
+      >
+        Salvar
+      </button>
+      <div>
+        <button
+          mat-icon-button
+          class="more-button"
+          (click)="deletar(regra.key)"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </mat-card>
+  </div>
+  <div>
+    <mat-card>
+      <mat-card-content
+        fxLayoutAlign="center center"
+        Style="height:100%; width: 90%"
+      >
+        <button mat-fab color="primary" (click)="novaRegra()">
+          <mat-icon>add_circle_outline</mat-icon>
+        </button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

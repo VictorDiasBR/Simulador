@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnInit, Inject } from "@angular/core";
 import { LabService } from "../service/lab.service";
 import { LabDataService } from "../service/lab.data.service";
 import { Lab, Equip } from "../service/lab";
+import { Regra } from "../service/regra";
 import { Observable } from "rxjs";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { STEPPER_GLOBAL_OPTIONS } from "@angular/cdk/stepper";
@@ -45,7 +46,9 @@ export class SimuladorComponent implements OnInit {
   constructor(
     private _formBuilder: FormBuilder,
     private breakpointObserver: BreakpointObserver,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private labService: LabService,
+    private labDataService: LabDataService
   ) {
     this.breakpointObserver
       .observe([
@@ -258,17 +261,19 @@ export class SimulacaoTSE implements OnInit, AfterViewInit {
   templateUrl: "./simulacao-trd.html",
   styleUrls: ["./simulacao-trd.css"]
 })
-export class SimulacaoTRD implements OnInit {
+export class SimulacaoTRD implements OnInit, AfterViewInit {
   simulacao: any;
-  labs: Observable<any>;
-  equips: Item[] = [];
-  diasDiff: any;
-
   bandeira = 0.5;
-  dataInicio: any;
-  dataFim: any;
 
   exe: any;
+  key: any;
+
+  labs: Observable<any>;
+
+  nomesEquipsLab = [];
+
+  regra: Regra;
+  regras: Observable<any>;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: SimuacaoTSE,
@@ -280,8 +285,63 @@ export class SimulacaoTRD implements OnInit {
 
   ngOnInit() {
     this.labs = this.labService.getAll();
+    this.regras = this.labService.getAllRegras();
+    var nomes = [];
+
+    this.labs.forEach((element) => {
+      element.forEach((element) => {
+        element.equips.forEach((element) => {
+          nomes.push(element.nome);
+        });
+
+        nomes.forEach((item) => {
+          var duplicated =
+            this.nomesEquipsLab.findIndex((redItem) => {
+              return item === redItem;
+            }) > -1;
+
+          if (!duplicated) {
+            this.nomesEquipsLab.push(item);
+          }
+        });
+      });
+    });
   }
 
+  ngAfterViewInit() {
+    this.labDataService.currentRegra.subscribe((data) => {
+      this.regras = this.labService.getAllRegras();
+    });
+  }
+
+  novaRegra() {
+    this.regra = new Regra();
+    this.regra = {
+      laboratorio: "*",
+      estadoLab: true,
+      equipamento: "*",
+      probEquip: 0
+    };
+    this.labService.insertRegra(this.regra);
+    this.labDataService.changeRegra(this.regra, this.key);
+  }
+
+  salvarRegra(key, regra, lab, estado, equip, prob) {
+    if (lab) {
+      regra = {
+        laboratorio: lab,
+        estadoLab: estado,
+        equipamento: equip,
+        probEquip: prob
+      };
+    }
+
+    this.labService.updateRegra(regra, key);
+  }
+
+  deletar(key) {
+    this.labService.deleteRegra(key);
+  }
   iniciarSimulacao() {
     if (this.exe === true) {
       setInterval(() => {}, 1000);

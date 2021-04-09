@@ -53,7 +53,7 @@
             </div>
           </mat-grid-tile>
           <mat-grid-tile>
-            Texto Explicando os campos! Teste - {{tipo.value | json}}
+            Texto Explicando os campos! Teste - {{tipo.value.tipo}}
           </mat-grid-tile>
         </mat-grid-list>
 
@@ -71,7 +71,8 @@
           </button>
         </div>
       </mat-step>
-      <mat-step [stepControl]="periodo" errorMessage="Informe o período!">
+      <mat-step [stepControl]="periodo" errorMessage="Informe o período!" 
+      [optional]="tipo.value.tipo==='tReal' ? true : false">
         <mat-grid-list #grid [cols]="cols" rowHeight="2:1">
           <mat-grid-tile>
             <mat-form-field [formGroup]="periodo">
@@ -136,7 +137,9 @@
             </div>
           </mat-grid-tile>
           <mat-grid-tile>
-            Texto Explicando os campos! Teste - {{modelo.value|json}}
+           
+              Texto Explicando os campos! Teste - {{modelo.value|json}}
+
           </mat-grid-tile>
         </mat-grid-list>
 

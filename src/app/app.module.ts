@@ -20,6 +20,7 @@ import { AppComponent } from "./app.component";
 import { AppRoutingModule } from "./app-routing.module";
 import {
   SimulacaoTSE,
+  SimulacaoTRD,
   SimuladorComponent
 } from "./simulador/simulador.component";
 import { FormsModule } from "@angular/forms";
@@ -33,7 +34,8 @@ import { UiControleComponent } from "./simulador/ui-controle/ui-controle.compone
     SimuladorComponent,
     JanelaComponent,
     UiControleComponent,
-    SimulacaoTSE
+    SimulacaoTSE,
+    SimulacaoTRD
   ],
   imports: [
     MatTableModule,
