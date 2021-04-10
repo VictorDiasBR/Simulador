@@ -343,9 +343,7 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
     this.labService.deleteRegra(key);
   }
   iniciarSimulacao() {
-    if (this.exe === true) {
-      setInterval(() => {}, 1000);
-    }
+    this.exe = true;
     var monteCarlo = function () {
       // We do this “forever” until we find a qualifying random value.
       while (true) {
@@ -361,5 +359,51 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
         }
       }
     };
+
+      var loop = setInterval(() => {
+        /* nvl 1 - percorrer regras */
+        this.regras.forEach((element) => {
+          element.forEach((regra) => {
+            /* nvl 2 - percorrer labs */
+            this.labs.forEach((element) => {
+              element.forEach((lab) => {
+                /* nvl 3 - filtrar regra lab */
+                if (
+                  regra.laboratorio === lab.nome &&
+                  regra.estadoLab === lab.estado
+                ) {
+                  /* nvl 4 - percorrer equipamentos do lab */
+                  lab.equips.forEach((equip) => {
+                    /* nvl 5 - filtrar equipamentos da regra */
+                    if (regra.equipamento === equip.nome) {
+                      /* nvl 6 - gerar número aleatório */
+                          var monteCarlo = monteCarlo();
+                        /* nvl 6.1 - converter probabilidade para decimal */
+                          var probabilidade = regra.probEquip/100;
+                         /* nvl 7 - processo decisório 
+                         (mudança de estado do equipamento ou não) */  
+                          if(monteCarlo > probabilidade && equip.estado === "on"){
+                              equip.estado="off";
+                              this.labService.update(lab,lab.key);  
+                          }else if(monteCarlo < probabilidade && equip.estado === "off"){
+                            equip.estado="on";
+                            this.labService.update(lab,lab.key);
+                          }
+
+                    }
+                  });
+                }
+              });
+            });
+          });
+        });
+        if(this.exe===false){
+          clearInterval(loop)
+        }
+      }, 1000);
+  
+  }
+  pausarSimulacao() {
+    this.exe = false;
   }
 }
