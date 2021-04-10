@@ -326,81 +326,118 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
     this.labDataService.changeRegra(this.regra, this.key);
   }
 
-  salvarRegra(key, regra, lab, estado, equip, prob) {
-    if (lab) {
-      regra = {
-        laboratorio: lab,
-        estadoLab: estado,
-        equipamento: equip,
-        probEquip: prob
-      };
-    }
+  salvarRegra(key, regra, lab, estado: boolean, equip, prob: number) {
+    this.regra = new Regra();
 
-    this.labService.updateRegra(regra, key);
+    this.regra = {
+      laboratorio: lab,
+      estadoLab: Boolean(estado),
+      equipamento: equip,
+      probEquip: Number(prob)
+    };
+
+    this.labService.updateRegra(this.regra, key);
   }
 
   deletar(key) {
     this.labService.deleteRegra(key);
   }
+
+  monteCarlo() {
+    // We do this “forever” until we find a qualifying random value.
+    while (true) {
+      // Pick a random value.
+      var r1 = Math.random();
+      // Assign a probability.
+      var probability = r1;
+      // Pick a second random value.
+      var r2 = Math.random();
+      // Does it qualify? If so, we’re done!
+      if (r2 < probability) {
+        return r1;
+      }
+    }
+  }
   iniciarSimulacao() {
     this.exe = true;
-    var monteCarlo = function () {
-      // We do this “forever” until we find a qualifying random value.
-      while (true) {
-        // Pick a random value.
-        var r1 = Math.random();
-        // Assign a probability.
-        var probability = r1;
-        // Pick a second random value.
-        var r2 = Math.random();
-        // Does it qualify? If so, we’re done!
-        if (r2 < probability) {
-          return r1;
-        }
-      }
-    };
+    console.log("inicio");
 
-      var loop = setInterval(() => {
-        /* nvl 1 - percorrer regras */
-        this.regras.forEach((element) => {
-          element.forEach((regra) => {
-            /* nvl 2 - percorrer labs */
-            this.labs.forEach((element) => {
-              element.forEach((lab) => {
-                /* nvl 3 - filtrar regra lab */
-                if (
-                  regra.laboratorio === lab.nome &&
-                  regra.estadoLab === lab.estado
-                ) {
-                  /* nvl 4 - percorrer equipamentos do lab */
-                  lab.equips.forEach((equip) => {
-                    /* nvl 5 - filtrar equipamentos da regra */
-                    if (regra.equipamento === equip.nome) {
-                      /* nvl 6 - gerar número aleatório */
-                          var monteCarlo = monteCarlo();
-                        /* nvl 6.1 - converter probabilidade para decimal */
-                          var probabilidade = regra.probEquip/100;
-                         /* nvl 7 - processo decisório 
-                         (mudança de estado do equipamento ou não) */  
-                          if(monteCarlo > probabilidade && equip.estado === "on"){
-                              equip.estado="off";
-                              this.labService.update(lab,lab.key);  
-                          }else if(monteCarlo < probabilidade && equip.estado === "off"){
-                            equip.estado="on";
-                            this.labService.update(lab,lab.key);
-                          }
-
+    var loop = setInterval(() => {
+      if(this.exe===true){
+      /* nvl 1 - percorrer regras */
+      this.regras.forEach((element) => {
+        element.forEach((regra) => {
+          /* nvl 2 - percorrer labs */
+          this.labs.forEach((element) => {
+            element.forEach((lab) => {
+              /* nvl 3 - filtrar regra lab */
+              if (
+                regra.laboratorio === lab.nome &&
+                regra.estadoLab === lab.aula
+              ) {
+                /* nvl 4 - percorrer equipamentos do lab */
+                lab.equips.forEach((equip) => {
+                  /* nvl 5 - filtrar equipamentos da regra */
+                  if (regra.equipamento === equip.nome) {
+                    /* nvl 6 - gerar número aleatório */
+                    var monteCarlo = this.monteCarlo();
+                    /* nvl 6.1 - converter probabilidade para decimal */
+                    var probabilidade = regra.probEquip / 100;
+                    /* nvl 7 - processo decisório 
+                         (mudança de estado do equipamento ou não) */
+                    if  (
+                      equip.estado === "off" &&
+                      probabilidade === 1
+                    ) {
+                      equip.estado = "on";
+                      this.labService.update(lab, lab.key);
+                      console.log(
+                        lab.nome + " ligar-> " + equip.nome + " id- " + equip.id
+                      );
+                    } else if(probabilidade === 0 && equip.estado === "on") {
+                      equip.estado = "off";
+                      this.labService.update(lab, lab.key);
+                      console.log(
+                        lab.nome +
+                          " desligar-> " +
+                          equip.nome +
+                          " id- " +
+                          equip.id
+                      );
+                    }else if (
+                      monteCarlo < probabilidade &&
+                      equip.estado === "off" &&
+                      probabilidade > 0
+                    ) {
+                      equip.estado = "on";
+                      this.labService.update(lab, lab.key);
+                      console.log(
+                        lab.nome + " ligar-> " + equip.nome + " id- " + equip.id
+                      );
+                    } else if (monteCarlo > probabilidade && equip.estado === "on") {
+                      equip.estado = "off";
+                      this.labService.update(lab, lab.key);
+                      console.log(
+                        lab.nome +
+                          " desligar-> " +
+                          equip.nome +
+                          " id- " +
+                          equip.id
+                      );
                     }
-                  });
-                }
-              });
+                  }
+                });
+              }
             });
           });
         });
-        if(this.exe===false){
-          clearInterval(loop)
-        }
-      }, 1000);
+      });
+      if (this.exe === false) {
+        console.log("fim");
+        clearInterval(loop);
+      }
+    }
+    }, 1000);
   
   }
   pausarSimulacao() {
