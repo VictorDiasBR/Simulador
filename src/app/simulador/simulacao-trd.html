@@ -83,7 +83,22 @@
         <button mat-fab color="primary" (click)="novaRegra()">
           <mat-icon>add_circle_outline</mat-icon>
         </button>
-        <button mat-fab color="primary" (click)="iniciarSimulacao()">
+        <button
+          mat-fab
+          color="primary"
+          *ngIf="simulacao.modelo.modelo === 'dinamica'"
+          (click)="iniciarSimulacaoDinamica()"
+        >
+          <mat-icon>
+            play_circle_outline
+          </mat-icon>
+        </button>
+        <button
+          mat-fab
+          color="primary"
+          *ngIf="simulacao.modelo.modelo === 'estatica'"
+          (click)="iniciarSimulacaoEstatica()"
+        >
           <mat-icon>
             play_circle_outline
           </mat-icon>

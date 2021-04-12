@@ -97,7 +97,7 @@ export class UiControleComponent implements OnInit, AfterViewInit {
         }
 
         this.key = data.key;
-
+        console.log("UI-CONTROLE");
         this.labService.update(this.lab, this.key);
         this.edit = "";
       }

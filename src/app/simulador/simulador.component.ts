@@ -112,7 +112,8 @@ export class SimuladorComponent implements OnInit {
           snapshot: snapshot
         }
       });
-    } else if (tipo.tipo === "tReal" && modelo.modelo === "dinamica") {
+    } else if ((tipo.tipo === "tReal")) {
+
       this.dialog.open(SimulacaoTRD, {
         data: {
           dados: dados,
@@ -269,7 +270,7 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
   key: any;
 
   labs: Observable<any>;
-
+  loop: any;
   nomesEquipsLab = [];
 
   regra: Regra;
@@ -308,11 +309,7 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
     });
   }
 
-  ngAfterViewInit() {
-    this.labDataService.currentRegra.subscribe((data) => {
-      this.regras = this.labService.getAllRegras();
-    });
-  }
+  ngAfterViewInit() {}
 
   novaRegra() {
     this.regra = new Regra();
@@ -326,12 +323,16 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
     this.labDataService.changeRegra(this.regra, this.key);
   }
 
-  salvarRegra(key, regra, lab, estado: boolean, equip, prob: number) {
+  salvarRegra(key, regra, lab, estado, equip, prob) {
     this.regra = new Regra();
 
+    var state: boolean = true;
+    if (estado === "false") {
+      state = false;
+    }
     this.regra = {
       laboratorio: lab,
-      estadoLab: Boolean(estado),
+      estadoLab: state,
       equipamento: equip,
       probEquip: Number(prob)
     };
@@ -358,89 +359,126 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
       }
     }
   }
-  iniciarSimulacao() {
-    this.exe = true;
-    console.log("inicio");
 
-    var loop = setInterval(() => {
-      if(this.exe===true){
-      /* nvl 1 - percorrer regras */
-      this.regras.forEach((element) => {
-        element.forEach((regra) => {
-          /* nvl 2 - percorrer labs */
-          this.labs.forEach((element) => {
-            element.forEach((lab) => {
-              /* nvl 3 - filtrar regra lab */
-              if (
-                regra.laboratorio === lab.nome &&
-                regra.estadoLab === lab.aula
-              ) {
-                /* nvl 4 - percorrer equipamentos do lab */
-                lab.equips.forEach((equip) => {
-                  /* nvl 5 - filtrar equipamentos da regra */
-                  if (regra.equipamento === equip.nome) {
-                    /* nvl 6 - gerar número aleatório */
-                    var monteCarlo = this.monteCarlo();
-                    /* nvl 6.1 - converter probabilidade para decimal */
-                    var probabilidade = regra.probEquip / 100;
-                    /* nvl 7 - processo decisório 
+  iniciarSimulacaoDinamica() {
+    var count = 0;
+    /* nvl 2 - percorrer labs */
+    this.labs.forEach((element) => {
+      count++;
+      if (count === 1) {
+        this.loop = setInterval(() => {
+          element.forEach((lab) => {
+            /* nvl 1 - percorrer regras */
+            this.regras.forEach((element) => {
+              element.forEach((regra) => {
+                /* nvl 3 - filtrar regra lab */
+
+                if (
+                  regra.laboratorio === lab.nome &&
+                  regra.estadoLab === lab.aula
+                ) {
+                  /* nvl 4 - percorrer equipamentos do lab */
+                  lab.equips.forEach((equip) => {
+                    /* nvl 5 - filtrar equipamentos da regra */
+                    if (regra.equipamento === equip.nome) {
+                      /* nvl 6 - gerar número aleatório */
+                      var monteCarlo = this.monteCarlo();
+                      /* nvl 6.1 - converter probabilidade para decimal */
+                      var probabilidade = regra.probEquip / 100;
+                      /* nvl 7 - processo decisório 
                          (mudança de estado do equipamento ou não) */
-                    if  (
-                      equip.estado === "off" &&
-                      probabilidade === 1
-                    ) {
-                      equip.estado = "on";
-                      this.labService.update(lab, lab.key);
-                      console.log(
-                        lab.nome + " ligar-> " + equip.nome + " id- " + equip.id
-                      );
-                    } else if(probabilidade === 0 && equip.estado === "on") {
-                      equip.estado = "off";
-                      this.labService.update(lab, lab.key);
-                      console.log(
-                        lab.nome +
-                          " desligar-> " +
-                          equip.nome +
-                          " id- " +
-                          equip.id
-                      );
-                    }else if (
-                      monteCarlo < probabilidade &&
-                      equip.estado === "off" &&
-                      probabilidade > 0
-                    ) {
-                      equip.estado = "on";
-                      this.labService.update(lab, lab.key);
-                      console.log(
-                        lab.nome + " ligar-> " + equip.nome + " id- " + equip.id
-                      );
-                    } else if (monteCarlo > probabilidade && equip.estado === "on") {
-                      equip.estado = "off";
-                      this.labService.update(lab, lab.key);
-                      console.log(
-                        lab.nome +
-                          " desligar-> " +
-                          equip.nome +
-                          " id- " +
-                          equip.id
-                      );
+                      if (equip.estado === "off" && probabilidade === 1) {
+                        equip.estado = "on";
+                        this.labService.update(lab, lab.key);
+                      } else if (probabilidade === 0 && equip.estado === "on") {
+                        equip.estado = "off";
+                        this.labService.update(lab, lab.key);
+                      } else if (
+                        monteCarlo < probabilidade &&
+                        equip.estado === "off" &&
+                        probabilidade > 0
+                      ) {
+                        equip.estado = "on";
+                        this.labService.update(lab, lab.key);
+                      } else if (
+                        monteCarlo > probabilidade &&
+                        equip.estado === "on"
+                      ) {
+                        equip.estado = "off";
+                        this.labService.update(lab, lab.key);
+                      }
                     }
-                  }
-                });
-              }
+                  });
+
+                  
+                }
+              });
             });
           });
-        });
-      });
-      if (this.exe === false) {
-        console.log("fim");
-        clearInterval(loop);
+        }, 10000);
       }
-    }
-    }, 1000);
-  
+    });
+  }
+
+  iniciarSimulacaoEstatica() {
+    var count = 0;
+    /* nvl 2 - percorrer labs */
+    this.labs.forEach((element) => {
+      count++;
+      if (count === 1) {
+       
+          element.forEach((lab) => {
+            /* nvl 1 - percorrer regras */
+            this.regras.forEach((element) => {
+              element.forEach((regra) => {
+                /* nvl 3 - filtrar regra lab */
+
+                if (
+                  regra.laboratorio === lab.nome &&
+                  regra.estadoLab === lab.aula
+                ) {
+                  /* nvl 4 - percorrer equipamentos do lab */
+                  lab.equips.forEach((equip) => {
+                    /* nvl 5 - filtrar equipamentos da regra */
+                    if (regra.equipamento === equip.nome) {
+                      /* nvl 6 - gerar número aleatório */
+                      var monteCarlo = this.monteCarlo();
+                      /* nvl 6.1 - converter probabilidade para decimal */
+                      var probabilidade = regra.probEquip / 100;
+                      /* nvl 7 - processo decisório 
+                         (mudança de estado do equipamento ou não) */
+                      if (equip.estado === "off" && probabilidade === 1) {
+                        equip.estado = "on";
+                       
+                      } else if (probabilidade === 0 && equip.estado === "on") {
+                        equip.estado = "off";
+                       
+                      } else if (
+                        monteCarlo < probabilidade &&
+                        equip.estado === "off" &&
+                        probabilidade > 0
+                      ) {
+                        equip.estado = "on";
+                       
+                      } else if (
+                        monteCarlo > probabilidade &&
+                        equip.estado === "on"
+                      ) {
+                        equip.estado = "off";
+                        
+                      }
+                    }
+                  });
+                  this.labService.update(lab, lab.key);
+                  
+                }
+              });
+            });
+          });
+      }
+    });
   }
   pausarSimulacao() {
-    this.exe = false;
+    clearInterval(this.loop);
   }
 }

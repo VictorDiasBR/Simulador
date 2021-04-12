@@ -108,6 +108,7 @@ export class JanelaComponent implements OnInit, AfterViewInit {
         }
         this.lab = data.lab;
         this.key = data.key;
+        console.log("JANELA")
         this.labService.update(this.lab, this.key);
         this.edit = "";
       }
