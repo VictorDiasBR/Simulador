@@ -8,7 +8,7 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { STEPPER_GLOBAL_OPTIONS } from "@angular/cdk/stepper";
 import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
 import { MatDialog, MAT_DIALOG_DATA } from "@angular/material/dialog";
-
+import { timer, Subscription } from 'rxjs';
 export interface SimuacaoTSE {
   dados: any;
   tipo: any;
@@ -265,16 +265,19 @@ export class SimulacaoTSE implements OnInit, AfterViewInit {
 export class SimulacaoTRD implements OnInit, AfterViewInit {
   simulacao: any;
   bandeira = 0.5;
-
   exe: any;
   key: any;
+  timer:any;
 
   labs: Observable<any>;
   loop: any;
   nomesEquipsLab = [];
-
   regra: Regra;
   regras: Observable<any>;
+
+  horas:number = 0 ;
+  minutos:number = 0;
+  segundos:number = 0;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: SimuacaoTSE,
@@ -362,13 +365,28 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
 
   iniciarSimulacaoDinamica() {
     var count = 0;
-    /* nvl 2 - percorrer labs */
+
+    this.timer= setInterval(()=>{
+      this.segundos++;
+      if(this.segundos===60){
+        this.segundos=0;
+        this.minutos++;
+        if(this.minutos===60){
+          this.minutos=0;
+          this.horas++;
+          if(this.horas===24){
+            this.horas=0;
+          }
+        }
+      }
+    },1000);
+    /* nvl 1 - percorrer labs */
     this.labs.forEach((element) => {
       count++;
       if (count === 1) {
         this.loop = setInterval(() => {
           element.forEach((lab) => {
-            /* nvl 1 - percorrer regras */
+            /* nvl 2 - percorrer regras */
             this.regras.forEach((element) => {
               element.forEach((regra) => {
                 /* nvl 3 - filtrar regra lab */
@@ -389,27 +407,28 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
                          (mudança de estado do equipamento ou não) */
                       if (equip.estado === "off" && probabilidade === 1) {
                         equip.estado = "on";
-                        this.labService.update(lab, lab.key);
+                        this.labService.updateEquip(lab.key,lab.equips.indexOf(equip),equip);
                       } else if (probabilidade === 0 && equip.estado === "on") {
                         equip.estado = "off";
-                        this.labService.update(lab, lab.key);
+                        this.labService.updateEquip(lab.key,lab.equips.indexOf(equip),equip);
                       } else if (
                         monteCarlo < probabilidade &&
                         equip.estado === "off" &&
                         probabilidade > 0
                       ) {
                         equip.estado = "on";
-                        this.labService.update(lab, lab.key);
+                        this.labService.updateEquip(lab.key,lab.equips.indexOf(equip),equip);
                       } else if (
                         monteCarlo > probabilidade &&
                         equip.estado === "on"
                       ) {
                         equip.estado = "off";
-                        this.labService.update(lab, lab.key);
+                        this.labService.updateEquip(lab.key,lab.equips.indexOf(equip),equip);
                       }
+
                     }
                   });
-
+                  
                   
                 }
               });
@@ -422,13 +441,13 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
 
   iniciarSimulacaoEstatica() {
     var count = 0;
-    /* nvl 2 - percorrer labs */
+    /* nvl 1 - percorrer labs */
     this.labs.forEach((element) => {
       count++;
       if (count === 1) {
        
           element.forEach((lab) => {
-            /* nvl 1 - percorrer regras */
+            /* nvl 2 - percorrer regras */
             this.regras.forEach((element) => {
               element.forEach((regra) => {
                 /* nvl 3 - filtrar regra lab */
@@ -480,5 +499,6 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
   }
   pausarSimulacao() {
     clearInterval(this.loop);
+    clearInterval(this.timer);
   }
 }

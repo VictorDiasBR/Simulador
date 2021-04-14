@@ -26,7 +26,15 @@ export class LabService {
         console.error(error);
       });
   }
-
+  updateEquip(key: string, index: number, equip: Equip) {
+    this.db
+      .list("lab/" + key + "/equips/")
+      .update(index.toString(), equip)
+      .catch((error: any) => {
+        console.error(error);
+      });
+    
+  }
   getAll() {
     return this.db
       .list("lab")

@@ -47,36 +47,46 @@ export class UiControleComponent implements OnInit, AfterViewInit {
           for (const i of data.lab.equips) {
             if (i.id === this.idEquip) {
               i.estado = "on";
+              this.labService.updateEquip(
+                data.key,
+                data.lab.equips.indexOf(i),
+                i
+              );
             }
           }
-          console.log("editEquip-if - 1");
+          
         } else if (this.estadoEquip === "on") {
           for (const i of data.lab.equips) {
             if (i.id === this.idEquip) {
               i.estado = "off";
+              this.labService.updateEquip(
+                data.key,
+                data.lab.equips.indexOf(i),
+                i
+              );
             }
           }
-          console.log("editEquip-if - 2");
+         
         }
 
         this.lab.equips = data.lab.equips;
         this.key = data.key;
-        this.labService.update(this.lab, this.key);
+
         this.edit = "";
       } else if (data.lab && data.key && this.edit === "lab") {
         if (data.lab.estado === "on" && data.lab.aula === true) {
           this.lab.estado = "off";
           this.lab.aula = false;
-          console.log("editLab -if - 1");
+          
         } else if (data.lab.estado === "off") {
           this.lab.estado = "on";
-          console.log("editLab -if - 2");
+          
         } else if (data.lab.estado === "on") {
           this.lab.estado = "off";
           for (const i of data.lab.equips) {
             i.estado = "off";
           }
-          console.log("editLab-if - 3");
+          
         }
         this.lab.equips = data.lab.equips;
         this.key = data.key;
@@ -87,17 +97,17 @@ export class UiControleComponent implements OnInit, AfterViewInit {
         if (data.lab.aula === false && data.lab.estado === "off") {
           this.lab.aula = true;
           this.lab.estado = "on";
-          console.log("editAula - 1");
+         
         } else if (data.lab.aula === true) {
           this.lab.aula = false;
-          console.log("editAula - 2");
+          
         } else if (data.lab.aula === false) {
           this.lab.aula = true;
-          console.log("editAula - 3");
+         
         }
 
         this.key = data.key;
-        console.log("UI-CONTROLE");
+       
         this.labService.update(this.lab, this.key);
         this.edit = "";
       }
