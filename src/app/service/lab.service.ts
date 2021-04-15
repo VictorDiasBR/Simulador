@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Lab, Equip } from "./lab";
-import { Regra } from "./regra";
+import { Lab, Equip, Regra, Simulacao, Log } from "./lab";
 import { AngularFireDatabase } from "@angular/fire/database";
 
 import { map } from "rxjs/operators";
@@ -33,7 +32,6 @@ export class LabService {
       .catch((error: any) => {
         console.error(error);
       });
-    
   }
   getAll() {
     return this.db
@@ -86,5 +84,48 @@ export class LabService {
 
   deleteRegra(key: string) {
     this.db.object("regras/" + key).remove();
+  }
+
+  insertSimulacao(simulacao: Simulacao) {
+    this.db
+      .list("simulacoes")
+      .push(simulacao)
+      .then((result: any) => {
+        console.log(result.key);
+      });
+  }
+  insertLog(key: string, log: Log) {
+    this.db
+      .list("simulacoes/" + key + "/log")
+      .push(log)
+      .then((result: any) => {
+        
+      });
+  }
+  updateSimulacao(simulacao: Simulacao, key: string) {
+    this.db
+      .list("simulacoes")
+      .update(key, simulacao)
+      .catch((error: any) => {
+        console.error(error);
+      });
+  }
+
+  getAllSimulacoes() {
+    return this.db
+      .list("simulacoes")
+      .snapshotChanges()
+      .pipe(
+        map((changes) => {
+          return changes.map((c) => ({
+            key: c.payload.key,
+            ...(c.payload.val() as {})
+          }));
+        })
+      );
+  }
+
+  deleteSimulacao(key: string) {
+    this.db.object("simulacoes/" + key).remove();
   }
 }

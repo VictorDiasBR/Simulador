@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
-import { Lab, Equip } from "./lab";
-import { Regra } from "./regra";
+import { Lab, Equip, Regra } from "./lab";
+
 @Injectable({
   providedIn: "root"
 })

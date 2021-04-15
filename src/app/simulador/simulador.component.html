@@ -1,3 +1,22 @@
+<mat-expansion-panel (opened)="panelOpenState = true"
+                       (closed)="panelOpenState = false">
+<mat-expansion-panel-header>
+        <mat-panel-title>
+              Simulação
+          </mat-panel-title>
+        <mat-panel-description>
+            Currently I am {{panelOpenState ? 'open' : 'closed'}}
+        </mat-panel-description>
+          </mat-expansion-panel-header>                
+  <mat-grid-list [cols]="cols" rowHeight="3:1">
+    <mat-grid-tile>
+      ex
+    </mat-grid-tile>
+    <mat-grid-tile>
+      ex
+    </mat-grid-tile>
+  </mat-grid-list>
+</mat-expansion-panel>
 <mat-tab-group mat-align-tabs="center">
   <mat-tab label="Interface de Controle"
     ><app-ui-controle></app-ui-controle
@@ -71,8 +90,11 @@
           </button>
         </div>
       </mat-step>
-      <mat-step [stepControl]="periodo" errorMessage="Informe o período!" 
-      [optional]="tipo.value.tipo==='tReal' ? true : false">
+      <mat-step
+        [stepControl]="periodo"
+        errorMessage="Informe o período!"
+        [optional]="tipo.value.tipo==='tReal' ? true : false"
+      >
         <mat-grid-list #grid [cols]="cols" rowHeight="2:1">
           <mat-grid-tile>
             <mat-form-field [formGroup]="periodo">
@@ -137,9 +159,7 @@
             </div>
           </mat-grid-tile>
           <mat-grid-tile>
-           
-              Texto Explicando os campos! Teste - {{modelo.value|json}}
-
+            Texto Explicando os campos! Teste - {{modelo.value|json}}
           </mat-grid-tile>
         </mat-grid-list>
 
@@ -164,17 +184,14 @@
             <div class="example-container">
               <form [formGroup]="snapshot">
                 <div>
-                  <mat-radio-group
-                    formControlName="snapshot"
-                  >
+                  <mat-radio-group formControlName="snapshot">
                     <label>Base de dados: </label>
-                      <mat-radio-button value="snapshotUi"
-                        >Snapshot da UI.</mat-radio-button
-                      >
-                      <mat-radio-button value="snapShotOn">
-                        Todos equipamentos ligados.
-                      </mat-radio-button>
-                    
+                    <mat-radio-button value="snapshotUi"
+                      >Snapshot da UI.</mat-radio-button
+                    >
+                    <mat-radio-button value="snapShotOn">
+                      Todos equipamentos ligados.
+                    </mat-radio-button>
                   </mat-radio-group>
                 </div>
               </form>
