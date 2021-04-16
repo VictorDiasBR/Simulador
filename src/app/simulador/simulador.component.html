@@ -1,19 +1,37 @@
-<mat-expansion-panel (opened)="panelOpenState = true"
-                       (closed)="panelOpenState = false">
-<mat-expansion-panel-header>
-        <mat-panel-title>
-              Simulação
-          </mat-panel-title>
-        <mat-panel-description>
-            Currently I am {{panelOpenState ? 'open' : 'closed'}}
-        </mat-panel-description>
-          </mat-expansion-panel-header>                
+<mat-expansion-panel
+  (opened)="panelOpenState = true"
+  (closed)="panelOpenState = false"
+>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      Simulação
+    </mat-panel-title>
+    <mat-panel-description *ngIf="simulacao">
+     <div *ngIf="simulacao.estadoSimulacao===true">
+          Simulação {{simulacao.titulo}} em andamento!
+     </div>
+     <div *ngIf="simulacao.estadoSimulacao===false">
+      Nenhuma Simulação em andamento!
+    </div>
+    </mat-panel-description>
+  </mat-expansion-panel-header>
   <mat-grid-list [cols]="cols" rowHeight="3:1">
     <mat-grid-tile>
-      ex
+      <button mat-fab color="primary">
+        <mat-icon>pause</mat-icon>
+      </button>
     </mat-grid-tile>
     <mat-grid-tile>
-      ex
+      <label for="clipboard-example-textarea">Log: </label>
+      <textarea
+        readonly="true"
+        id="con-css"
+        cols="120"
+
+        rows="10"
+        [(ngModel)]="value"
+      >
+      </textarea>
     </mat-grid-tile>
   </mat-grid-list>
 </mat-expansion-panel>

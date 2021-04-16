@@ -28,3 +28,9 @@
 .example-container .mat-radio-button {
   margin: 0 12px;
 }
+textarea {
+  margin: 0px;
+}
+#con-css {
+  resize: none;
+}

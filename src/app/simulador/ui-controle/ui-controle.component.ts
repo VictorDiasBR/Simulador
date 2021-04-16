@@ -54,7 +54,6 @@ export class UiControleComponent implements OnInit, AfterViewInit {
               );
             }
           }
-          
         } else if (this.estadoEquip === "on") {
           for (const i of data.lab.equips) {
             if (i.id === this.idEquip) {
@@ -66,7 +65,6 @@ export class UiControleComponent implements OnInit, AfterViewInit {
               );
             }
           }
-         
         }
 
         this.lab.equips = data.lab.equips;
@@ -77,16 +75,13 @@ export class UiControleComponent implements OnInit, AfterViewInit {
         if (data.lab.estado === "on" && data.lab.aula === true) {
           this.lab.estado = "off";
           this.lab.aula = false;
-          
         } else if (data.lab.estado === "off") {
           this.lab.estado = "on";
-          
         } else if (data.lab.estado === "on") {
           this.lab.estado = "off";
           for (const i of data.lab.equips) {
             i.estado = "off";
           }
-          
         }
         this.lab.equips = data.lab.equips;
         this.key = data.key;
@@ -97,17 +92,14 @@ export class UiControleComponent implements OnInit, AfterViewInit {
         if (data.lab.aula === false && data.lab.estado === "off") {
           this.lab.aula = true;
           this.lab.estado = "on";
-         
         } else if (data.lab.aula === true) {
           this.lab.aula = false;
-          
         } else if (data.lab.aula === false) {
           this.lab.aula = true;
-         
         }
 
         this.key = data.key;
-       
+
         this.labService.update(this.lab, this.key);
         this.edit = "";
       }

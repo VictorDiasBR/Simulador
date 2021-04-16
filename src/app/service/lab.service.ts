@@ -94,13 +94,11 @@ export class LabService {
         console.log(result.key);
       });
   }
-  insertLog(key: string, log: Log) {
+  updateLog(key: string, log: Log) {
     this.db
-      .list("simulacoes/" + key + "/log")
-      .push(log)
-      .then((result: any) => {
-        
-      });
+      .list("simulacoes/" + key + "/log/")
+      .update(key, log)
+      .then((result: any) => {});
   }
   updateSimulacao(simulacao: Simulacao, key: string) {
     this.db

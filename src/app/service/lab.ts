@@ -4,6 +4,7 @@ export class Equip {
   tipo: string;
   estado: string;
   potencia: number;
+  dateTimeOn:string;
 }
 export class Lab {
   nome: string;

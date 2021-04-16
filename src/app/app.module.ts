@@ -6,7 +6,7 @@ import {
   NoopAnimationsModule
 } from "@angular/platform-browser/animations";
 import { CdkTableModule } from "@angular/cdk/table";
-
+import { ClipboardModule } from "@angular/cdk/clipboard";
 import { HttpClientModule } from "@angular/common/http";
 import { environment } from "../environments/environment";
 import { AngularFireModule } from "@angular/fire";
@@ -38,6 +38,7 @@ import { UiControleComponent } from "./simulador/ui-controle/ui-controle.compone
     SimulacaoTRD
   ],
   imports: [
+    ClipboardModule,
     MatTableModule,
     CdkTableModule,
     FlexLayoutModule,
