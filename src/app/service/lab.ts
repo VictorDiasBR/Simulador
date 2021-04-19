@@ -20,6 +20,7 @@ export class Regra {
   probEquip: number;
 }
 export class Log {
+  labNome?:string;
   equipamento?: any;
   dateTimeOn?: string;
   dateTimeOff?: string;

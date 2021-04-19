@@ -238,6 +238,7 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
                             element.forEach((s) => {
                               if (s.estadoSimulacao === true) {
                                 var log: Log = {
+                                  labNome:lab.nome,
                                   equipamento: equip,
                                   dateTimeOn: equip.dateTimeOn,
                                   dateTimeOff: new Date().toLocaleString()
@@ -279,6 +280,7 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
                             element.forEach((s) => {
                               if (s.estadoSimulacao === true) {
                                 var log: Log = {
+                                  labNome:lab.nome,
                                   equipamento: equip,
                                   dateTimeOn: equip.dateTimeOn,
                                   dateTimeOff: new Date().toLocaleString()
@@ -544,8 +546,11 @@ export class SimuladorComponent implements OnInit, AfterViewInit {
                 "Início da simulação: " + log.inicioSimulacao + "\n";
             } else {
               this.value +=
-                "Equipamento: " +
+              "Laboratório: " +
+                log.labNome +
+                " | Equipamento: " +
                 log.equipamento.nome +
+                " | Id: "+log.equipamento.id+
                 " | ligado em: " +
                 log.dateTimeOn +
                 " | Desligado em: " +
