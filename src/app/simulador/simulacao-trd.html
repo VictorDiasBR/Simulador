@@ -5,12 +5,13 @@
   <div
     fxLayout="row"
     fxLayoutAlign="start none"
+    fxFlexFill fxLayout.lt-sm="column"
     fxLayoutGap="16px"
     *ngFor="let regra of regras | async"
   >
     <mat-card class="dashboard-card">
       <mat-card-content class="dashboard-card-content" Style="height:100%;">
-        <form fxLayout="row" fxLayoutGap="10px">
+        <form fxLayout="row" fxLayoutGap="10px" fxFlexFill fxLayout.lt-sm="column">
           <mat-form-field appearance="fill">
             <mat-label>Laboratório:</mat-label>
             <mat-select value="{{regra.laboratorio}}" #laboratorio>
