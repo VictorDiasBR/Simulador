@@ -1,8 +1,7 @@
 <h2 mat-dialog-title>Definir probabilidades:(Opcional)</h2>
 
 <div mat-dialog-content>
-  
-  <p> Tempo de simulação: {{horas}}:{{minutos}}:{{segundos}}</p>
+  <p>Tempo de simulação: {{horas}}:{{minutos}}:{{segundos}}</p>
   <div
     fxLayout="row"
     fxLayoutAlign="start none"
@@ -88,17 +87,26 @@
         <button
           mat-fab
           color="primary"
-          *ngIf="simulacao.modelo.modelo === 'dinamica'"
-          (click)="iniciarSimulacaoDinamica()"
+          [matMenuTriggerFor]="menu"
+          *ngIf="dataSimulacao.modelo.modelo === 'dinamica'"
         >
           <mat-icon>
             play_circle_outline
           </mat-icon>
         </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="novaSimulacaoDinamica()">Nova</button>
+          <div *ngFor="let s of simulacoes | async">
+            <button mat-menu-item (click)="iniciarSimulacaoDinamica(s)">
+              {{s.titulo}}
+            </button>
+          </div>
+        </mat-menu>
+
         <button
           mat-fab
           color="primary"
-          *ngIf="simulacao.modelo.modelo === 'estatica'"
+          *ngIf="dataSimulacao.modelo.modelo === 'estatica'"
           (click)="iniciarSimulacaoEstatica()"
         >
           <mat-icon>

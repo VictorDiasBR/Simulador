@@ -3,8 +3,8 @@
   (closed)="panelOpenState = false"
 >
   <mat-expansion-panel-header>
-    <mat-panel-title>
-      Simulação
+    <mat-panel-title *ngIf="simulacao">
+      Simulação {{simulacao.titulo}}
     </mat-panel-title>
     <mat-panel-description *ngIf="simulacao">
      <div *ngIf="simulacao.estadoSimulacao===true">

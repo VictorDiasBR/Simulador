@@ -20,7 +20,7 @@ export interface SimuacaoTSE {
   styleUrls: ["./simulacao-trd.css"]
 })
 export class SimulacaoTRD implements OnInit, AfterViewInit {
-  simulacao: any;
+  dataSimulacao: any;
   bandeira = 0.5;
   exe: any;
   key: any;
@@ -34,17 +34,17 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
   listaLabs: Lab[] = [];
   listaRegras: Regra[] = [];
   simulacoes: Observable<any>;
-
+  simulacao: any;
   horas: number = 0;
   minutos: number = 0;
   segundos: number = 0;
-
+  editSimulacao: string = "";
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: SimuacaoTSE,
     private labService: LabService,
     private labDataService: LabDataService
   ) {
-    this.simulacao = data;
+    this.dataSimulacao = data;
   }
 
   ngOnInit() {
@@ -86,7 +86,13 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
     });
   }
 
-  ngAfterViewInit() {}
+  ngAfterViewInit() {
+    this.labDataService.currentSimulacao.subscribe((data) => {
+      if (data.simulacao && data.key) {
+        this.simulacao = data.simulacao;
+      }
+    });
+  }
 
   novaRegra() {
     this.regra = new Regra();
@@ -136,10 +142,21 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
       }
     }
   }
-  count1:number = 0;
-  iniciarSimulacaoDinamica() {
-    var count = 0;
-
+  count1: number = 0;
+  novaSimulacaoDinamica() {
+    var countx=0;
+    this.simulacoes.forEach(element => {
+      countx++;
+     if(countx===1){
+         element.forEach(s => {
+           if(s.estadoSimulacao===true){
+               s.estadoSimulacao=false;
+               this.labService.updateSimulacao(s,s.key);
+           }
+         });
+         
+       }
+   });
     var log: Log = {
       inicioSimulacao: new Date().toLocaleString()
     };
@@ -147,17 +164,46 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
     logs.push(log);
     var simulacao: Simulacao = {
       estadoSimulacao: true,
-      titulo: this.simulacao.dados.nome,
-      descricao: this.simulacao.dados.descricao,
-      modalidadeTempo: this.simulacao.tipo.tipo,
-      modelo: this.simulacao.modelo.modelo,
+      titulo: this.dataSimulacao.dados.nome,
+      descricao: this.dataSimulacao.dados.descricao,
+      modalidadeTempo: this.dataSimulacao.tipo.tipo,
+      modelo: this.dataSimulacao.modelo.modelo,
       snapshotLabs: this.listaLabs,
       regras: this.listaRegras,
       dateTimeInicio: new Date().toLocaleString(),
       log: logs
     };
     this.labService.insertSimulacao(simulacao);
+    var count=0;
+    this.simulacoes.forEach(element => {
+       count++;
+      if(count===1){
+          element.forEach(s => {
+            if(s.estadoSimulacao===true){
+                this.iniciarSimulacaoDinamica(s);
+            }
+          });
+        }
+    });
+  }
 
+  iniciarSimulacaoDinamica(simulacao: any) {
+    var countx=0;
+    this.simulacoes.forEach(element => {
+      countx++;
+     if(countx===1){
+         element.forEach(s => {
+           if(s.estadoSimulacao===true){
+               s.estadoSimulacao=false;
+               this.labService.updateSimulacao(s,s.key);
+           }
+         });
+         
+       }
+   });
+   simulacao.estadoSimulacao=true;
+   this.labService.updateSimulacao(simulacao,simulacao.key);
+    this.labDataService.changeSimulacao(simulacao, simulacao.key);
     this.timer = setInterval(() => {
       this.segundos++;
       if (this.segundos === 60) {
@@ -173,28 +219,29 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
       }
     }, 1000);
 
+    var count = 0;
     /* nvl 1 - percorrer labs */
     this.labs.forEach((element) => {
       count++;
       if (count === 1) {
         this.labs.forEach((l) => {
           this.count1++;
-          if(this.count1===1){
-           l.forEach((lab1) => {
-            lab1.equips.forEach((equip1) => {
-              if (this.count1 === 1) {
-                if (equip1.estado === "on") {
-                  equip1.dateTimeOn = simulacao.dateTimeInicio;
-                } else {
-                  equip1.dateTimeOn = "*";
+          if (this.count1 === 1) {
+            l.forEach((lab1) => {
+              lab1.equips.forEach((equip1) => {
+                if (this.count1 === 1) {
+                  if (equip1.estado === "on") {
+                    equip1.dateTimeOn = this.simulacao.dateTimeInicio;
+                  } else {
+                    equip1.dateTimeOn = "*";
+                  }
                 }
-              }
+              });
+              this.labService.update(lab1, lab1.key);
             });
-            this.labService.update(lab1,lab1.key);
-          });
-        }
+          }
         });
-    
+
         this.loop = setInterval(() => {
           element.forEach((lab) => {
             /* nvl 2 - percorrer regras */
@@ -218,7 +265,7 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
                          (mudança de estado do equipamento ou não) */
                       if (equip.estado === "off" && probabilidade === 1) {
                         equip.estado = "on";
-                        equip.dateTimeOn=new Date().toLocaleString();
+                        equip.dateTimeOn = new Date().toLocaleString();
                         this.labService.updateEquip(
                           lab.key,
                           lab.equips.indexOf(equip),
@@ -231,32 +278,28 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
                           lab.equips.indexOf(equip),
                           equip
                         );
-                        var count2 = 0;
-                        this.simulacoes.forEach((element) => {
-                          count2++;
-                          if (count2 === 1) {
-                            element.forEach((s) => {
-                              if (s.estadoSimulacao === true) {
-                                var log: Log = {
-                                  labNome:lab.nome,
-                                  equipamento: equip,
-                                  dateTimeOn: equip.dateTimeOn,
-                                  dateTimeOff: new Date().toLocaleString()
-                                };
 
-                                s.log.push(log);
-                                this.labService.updateSimulacao(s, s.key);
-                              }
-                            });
-                          }
-                        });
+                        if (this.simulacao.estadoSimulacao === true) {
+                          var log: Log = {
+                            labNome: lab.nome,
+                            equipamento: equip,
+                            dateTimeOn: equip.dateTimeOn,
+                            dateTimeOff: new Date().toLocaleString()
+                          };
+
+                          this.simulacao.log.push(log);
+                          this.labService.updateSimulacao(
+                            this.simulacao,
+                            this.simulacao.key
+                          );
+                        }
                       } else if (
                         monteCarlo < probabilidade &&
                         equip.estado === "off" &&
                         probabilidade > 0
                       ) {
                         equip.estado = "on";
-                        equip.dateTimeOn=new Date().toLocaleString();
+                        equip.dateTimeOn = new Date().toLocaleString();
                         this.labService.updateEquip(
                           lab.key,
                           lab.equips.indexOf(equip),
@@ -273,24 +316,20 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
                           equip
                         );
 
-                        var count3 = 0;
-                        this.simulacoes.forEach((element) => {
-                          count3++;
-                          if (count3 === 1) {
-                            element.forEach((s) => {
-                              if (s.estadoSimulacao === true) {
-                                var log: Log = {
-                                  labNome:lab.nome,
-                                  equipamento: equip,
-                                  dateTimeOn: equip.dateTimeOn,
-                                  dateTimeOff: new Date().toLocaleString()
-                                };
-                                s.log.push(log);
-                                this.labService.updateSimulacao(s, s.key);
-                              }
-                            });
-                          }
-                        });
+                        if (this.simulacao.estadoSimulacao === true) {
+                          var log2: Log = {
+                            labNome: lab.nome,
+                            equipamento: equip,
+                            dateTimeOn: equip.dateTimeOn,
+                            dateTimeOff: new Date().toLocaleString()
+                          };
+
+                          this.simulacao.log.push(log2);
+                          this.labService.updateSimulacao(
+                            this.simulacao,
+                            this.simulacao.key
+                          );
+                        }
                       }
                     }
                   });
@@ -302,7 +341,6 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
       }
     });
   }
-
   setarDatetimeEquips(dateTimeOn: string) {}
   iniciarSimulacaoEstatica() {
     var count = 0;
@@ -374,7 +412,7 @@ export interface Item {
   styleUrls: ["./simulacao-tse.css"]
 })
 export class SimulacaoTSE implements OnInit, AfterViewInit {
-  simulacao: any;
+  dataSimulacao: any;
   labs: Observable<any>;
   equips: Item[] = [];
   diasDiff: any;
@@ -388,7 +426,7 @@ export class SimulacaoTSE implements OnInit, AfterViewInit {
     private labService: LabService,
     private labDataService: LabDataService
   ) {
-    this.simulacao = data;
+    this.dataSimulacao = data;
   }
   displayedColumns: string[] = ["nome", "horas", "custoTotal"];
 
@@ -432,17 +470,20 @@ export class SimulacaoTSE implements OnInit, AfterViewInit {
       this.equips = this.equips.concat();
     });
 
-    var dataInicio = this.simulacao.periodo.inicio.toLocaleDateString("pt-BR", {
-      timeZone: "UTC"
-    });
-    var dataFim = this.simulacao.periodo.fim.toLocaleDateString("pt-BR", {
+    var dataInicio = this.dataSimulacao.periodo.inicio.toLocaleDateString(
+      "pt-BR",
+      {
+        timeZone: "UTC"
+      }
+    );
+    var dataFim = this.dataSimulacao.periodo.fim.toLocaleDateString("pt-BR", {
       timeZone: "UTC"
     });
     this.dataInicio = dataInicio;
     this.dataFim = dataFim;
     var dias = Math.abs(
-      this.simulacao.periodo.inicio.getDate() -
-        this.simulacao.periodo.fim.getDate()
+      this.dataSimulacao.periodo.inicio.getDate() -
+        this.dataSimulacao.periodo.fim.getDate()
     );
     this.diasDiff = dias;
   }
@@ -459,7 +500,7 @@ export class SimulacaoTSE implements OnInit, AfterViewInit {
       element.forEach((element) => {
         for (const j of this.equips) {
           for (const i of element.equips) {
-            if (this.simulacao.snapshot.snapshot === "snapshotUi") {
+            if (this.dataSimulacao.snapshot.snapshot === "snapshotUi") {
               if (j.nome === i.nome && id === j.id && i.estado === "on") {
                 var temp = j.horas * this.diasDiff;
                 var kw = i.potencia / 1000;
@@ -546,11 +587,12 @@ export class SimuladorComponent implements OnInit, AfterViewInit {
                 "Início da simulação: " + log.inicioSimulacao + "\n";
             } else {
               this.value +=
-              "Laboratório: " +
+                "Laboratório: " +
                 log.labNome +
                 " | Equipamento: " +
                 log.equipamento.nome +
-                " | Id: "+log.equipamento.id+
+                " | Id: " +
+                log.equipamento.id +
                 " | ligado em: " +
                 log.dateTimeOn +
                 " | Desligado em: " +
@@ -558,11 +600,8 @@ export class SimuladorComponent implements OnInit, AfterViewInit {
                 "\n";
             }
           });
-        }else{
-          this.simulacao.estadoSimulacao=false;
         }
       });
-
     });
 
     this.breakpointObserver

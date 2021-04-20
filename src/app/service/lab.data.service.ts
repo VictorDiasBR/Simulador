@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
-import { Lab, Equip, Regra } from "./lab";
+import { Lab, Equip, Regra,Simulacao } from "./lab";
 
 @Injectable({
   providedIn: "root"
@@ -11,6 +11,9 @@ export class LabDataService {
 
   public regraSource = new BehaviorSubject({ regra: null, key: "" });
   currentRegra = this.regraSource.asObservable();
+
+  public simulacaoSource = new BehaviorSubject({ simulacao: null, key: "" });
+  currentSimulacao = this.simulacaoSource.asObservable();
   constructor() {}
 
   changeLab(lab: Lab, key: string) {
@@ -18,5 +21,8 @@ export class LabDataService {
   }
   changeRegra(regra: Regra, key: string) {
     this.regraSource.next({ regra: regra, key: key });
+  }
+  changeSimulacao(simulacao: Simulacao, key: string) {
+    this.simulacaoSource.next({ simulacao: simulacao, key: key });
   }
 }
