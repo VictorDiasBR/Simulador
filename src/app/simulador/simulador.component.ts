@@ -266,18 +266,19 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
                       if (equip.estado === "off" && probabilidade === 1) {
                         equip.estado = "on";
                         equip.dateTimeOn = new Date().toLocaleString();
-                        this.labService.updateEquip(
-                          lab.key,
-                          lab.equips.indexOf(equip),
-                          equip
-                        );
+                        lab.consumo+=(equip.potencia/1000)
+                        var consumo1=0;
+                        consumo1=lab.consumo;
+                        lab.consumo=Number(consumo1.toFixed(2))
+                        this.labService.update(lab,lab.key)
+              
                       } else if (probabilidade === 0 && equip.estado === "on") {
                         equip.estado = "off";
-                        this.labService.updateEquip(
-                          lab.key,
-                          lab.equips.indexOf(equip),
-                          equip
-                        );
+                        lab.consumo-=(equip.potencia/1000)
+                        var consumo2=0;
+                        consumo2=lab.consumo;
+                        lab.consumo=Number(consumo2.toFixed(2))
+                        this.labService.update(lab,lab.key)
 
                         if (this.simulacao.estadoSimulacao === true) {
                           var log: Log = {
@@ -300,21 +301,21 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
                       ) {
                         equip.estado = "on";
                         equip.dateTimeOn = new Date().toLocaleString();
-                        this.labService.updateEquip(
-                          lab.key,
-                          lab.equips.indexOf(equip),
-                          equip
-                        );
+                        lab.consumo+=(equip.potencia/1000)
+                        var consumo3=0;
+                        consumo3=lab.consumo;
+                        lab.consumo=Number(consumo3.toFixed(2))
+                        this.labService.update(lab,lab.key)
                       } else if (
                         monteCarlo > probabilidade &&
                         equip.estado === "on"
                       ) {
                         equip.estado = "off";
-                        this.labService.updateEquip(
-                          lab.key,
-                          lab.equips.indexOf(equip),
-                          equip
-                        );
+                        lab.consumo-=(equip.potencia/1000)
+                        var consumo4=0;
+                        consumo4=lab.consumo;
+                        lab.consumo=Number(consumo4.toFixed(2))
+                        this.labService.update(lab,lab.key)
 
                         if (this.simulacao.estadoSimulacao === true) {
                           var log2: Log = {
@@ -370,19 +371,39 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
                          (mudança de estado do equipamento ou não) */
                     if (equip.estado === "off" && probabilidade === 1) {
                       equip.estado = "on";
+                      lab.consumo+=(equip.potencia/1000)
+                      var consumo5=0;
+                        consumo5=lab.consumo;
+                        lab.consumo=Number(consumo5.toFixed(2))
+                      
                     } else if (probabilidade === 0 && equip.estado === "on") {
                       equip.estado = "off";
+                      lab.consumo-=(equip.potencia/1000)
+                      var consumo6=0;
+                      consumo6=lab.consumo;
+                      lab.consumo=Number(consumo6.toFixed(2))
+                      
                     } else if (
                       monteCarlo < probabilidade &&
                       equip.estado === "off" &&
                       probabilidade > 0
                     ) {
                       equip.estado = "on";
+                      lab.consumo+=(equip.potencia/1000)
+                      var consumo7=0;
+                        consumo7=lab.consumo;
+                        lab.consumo=Number(consumo7.toFixed(2))
+                    
                     } else if (
                       monteCarlo > probabilidade &&
                       equip.estado === "on"
                     ) {
                       equip.estado = "off";
+                      lab.consumo-=(equip.potencia/1000)
+                      var consumo8=0;
+                        consumo8=lab.consumo;
+                        lab.consumo=Number(consumo8.toFixed(2))
+                      
                     }
                   }
                 });

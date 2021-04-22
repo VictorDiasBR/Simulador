@@ -44,44 +44,50 @@ export class UiControleComponent implements OnInit, AfterViewInit {
       this.lab = new Lab();
       if (data.lab && data.key && this.edit === "equip") {
         if (this.estadoEquip === "off") {
+          var sum2 = 0;
           for (const i of data.lab.equips) {
             if (i.id === this.idEquip) {
               i.estado = "on";
-              this.labService.updateEquip(
-                data.key,
-                data.lab.equips.indexOf(i),
-                i
-              );
+            }
+            if (i.estado === "on") {
+              sum2 += i.potencia / 1000;
             }
           }
+          this.lab.consumo = Number(sum2.toFixed(2));
         } else if (this.estadoEquip === "on") {
+          var sum1 = 0;
           for (const i of data.lab.equips) {
             if (i.id === this.idEquip) {
               i.estado = "off";
-              this.labService.updateEquip(
-                data.key,
-                data.lab.equips.indexOf(i),
-                i
-              );
+            }
+            if (i.estado === "on") {
+              sum1 += i.potencia / 1000;
             }
           }
+          this.lab.consumo = Number(sum1.toFixed(2));
         }
 
         this.lab.equips = data.lab.equips;
         this.key = data.key;
-
+        this.labService.update(this.lab, data.key);
         this.edit = "";
       } else if (data.lab && data.key && this.edit === "lab") {
         if (data.lab.estado === "on" && data.lab.aula === true) {
+          this.lab.consumo = 0;
           this.lab.estado = "off";
           this.lab.aula = false;
         } else if (data.lab.estado === "off") {
           this.lab.estado = "on";
+          var sum = 0;
+          for (const i of data.lab.equips) {
+            if (i.estado === "on") {
+              sum += i.potencia / 1000;
+            }
+          }
+          this.lab.consumo = Number(sum.toFixed(2));
         } else if (data.lab.estado === "on") {
           this.lab.estado = "off";
-          for (const i of data.lab.equips) {
-            i.estado = "off";
-          }
+          this.lab.consumo = 0;
         }
         this.lab.equips = data.lab.equips;
         this.key = data.key;
