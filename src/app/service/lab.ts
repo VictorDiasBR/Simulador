@@ -32,7 +32,7 @@ export class Simulacao {
   descricao: string;
   modalidadeTempo: string;
   modelo: string;
-  snapshotLabs: Lab[];
+  snapshotLabs: any;
   regras: Regra[];
   log: Log[];
   dateTimeInicio: string;

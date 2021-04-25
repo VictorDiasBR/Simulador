@@ -31,7 +31,7 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
   nomesEquipsLab = [];
   regra: Regra;
   regras: Observable<any>;
-  listaLabs: Lab[] = [];
+  listaSnapshots: any = [];
   listaRegras: Regra[] = [];
   simulacoes: Observable<any>;
   simulacao: any;
@@ -53,9 +53,22 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
     this.simulacoes = this.labService.getAllSimulacoes();
 
     this.labs.forEach((element) => {
-      this.listaLabs = [];
       element.forEach((lab) => {
-        this.listaLabs.push(lab);
+        for (const equip of lab.equips) {
+          var listaOn = [];
+          if (equip.estado === "on") {
+            listaOn.push(new Date().toLocaleString());
+          } else {
+            listaOn.push("*");
+          }
+
+          var aux2 = {
+            nomeLab: lab.nome,
+            equip: equip,
+            equipDateOn: listaOn
+          };
+          this.listaSnapshots.push(aux2);
+        }
       });
     });
     this.regras.forEach((element) => {
@@ -144,65 +157,64 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
   }
   count1: number = 0;
   novaSimulacaoDinamica() {
-    var countx=0;
-    this.simulacoes.forEach(element => {
+    var countx = 0;
+    this.simulacoes.forEach((element) => {
       countx++;
-     if(countx===1){
-         element.forEach(s => {
-           if(s.estadoSimulacao===true){
-               s.estadoSimulacao=false;
-               this.labService.updateSimulacao(s,s.key);
-           }
-         });
-         
-       }
-   });
+      if (countx === 1) {
+        element.forEach((s) => {
+          if (s.estadoSimulacao === true) {
+            s.estadoSimulacao = false;
+            this.labService.updateSimulacao(s, s.key);
+          }
+        });
+      }
+    });
     var log: Log = {
       inicioSimulacao: new Date().toLocaleString()
     };
     var logs: Log[] = [];
     logs.push(log);
+
     var simulacao: Simulacao = {
       estadoSimulacao: true,
       titulo: this.dataSimulacao.dados.nome,
       descricao: this.dataSimulacao.dados.descricao,
       modalidadeTempo: this.dataSimulacao.tipo.tipo,
       modelo: this.dataSimulacao.modelo.modelo,
-      snapshotLabs: this.listaLabs,
+      snapshotLabs: this.listaSnapshots,
       regras: this.listaRegras,
       dateTimeInicio: new Date().toLocaleString(),
       log: logs
     };
     this.labService.insertSimulacao(simulacao);
-    var count=0;
-    this.simulacoes.forEach(element => {
-       count++;
-      if(count===1){
-          element.forEach(s => {
-            if(s.estadoSimulacao===true){
-                this.iniciarSimulacaoDinamica(s);
-            }
-          });
-        }
+    var count = 0;
+    this.simulacoes.forEach((element) => {
+      count++;
+      if (count === 1) {
+        element.forEach((s) => {
+          if (s.estadoSimulacao === true) {
+            this.iniciarSimulacaoDinamica(s);
+          }
+        });
+      }
     });
   }
 
   iniciarSimulacaoDinamica(simulacao: any) {
-    var countx=0;
-    this.simulacoes.forEach(element => {
+    var countx = 0;
+    this.simulacoes.forEach((element) => {
       countx++;
-     if(countx===1){
-         element.forEach(s => {
-           if(s.estadoSimulacao===true){
-               s.estadoSimulacao=false;
-               this.labService.updateSimulacao(s,s.key);
-           }
-         });
-         
-       }
-   });
-   simulacao.estadoSimulacao=true;
-   this.labService.updateSimulacao(simulacao,simulacao.key);
+      if (countx === 1) {
+        element.forEach((s) => {
+          if (s.estadoSimulacao === true) {
+            s.estadoSimulacao = false;
+            this.labService.updateSimulacao(s, s.key);
+          }
+        });
+      }
+    });
+    simulacao.estadoSimulacao = true;
+    this.labService.updateSimulacao(simulacao, simulacao.key);
     this.labDataService.changeSimulacao(simulacao, simulacao.key);
     this.timer = setInterval(() => {
       this.segundos++;
@@ -266,19 +278,51 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
                       if (equip.estado === "off" && probabilidade === 1) {
                         equip.estado = "on";
                         equip.dateTimeOn = new Date().toLocaleString();
-                        lab.consumo+=(equip.potencia/1000)
-                        var consumo1=0;
-                        consumo1=lab.consumo;
-                        lab.consumo=Number(consumo1.toFixed(2))
-                        this.labService.update(lab,lab.key)
-              
+                        lab.consumo += equip.potencia / 1000;
+                        var consumo1 = 0;
+                        consumo1 = lab.consumo;
+                        lab.consumo = Number(consumo1.toFixed(2));
+                        this.labService.update(lab, lab.key);
+                        for (const s of this.simulacao.snapshotLabs) {
+                          if (
+                            lab.nome === s.nomeLab &&
+                            equip.id === s.equip.id
+                          ) {
+                            var achou = s.equipDateOn.filter(
+                              (item) =>
+                                item.slice(0, 10) ===
+                                equip.dateTimeOn.slice(0, 10)
+                            );
+
+                            if (achou) {
+                              for (var x of s.equipDateOn) {
+                                if (
+                                  x.slice(0, 10) ===
+                                  equip.dateTimeOn.slice(0, 10)
+                                ) {
+                                  x = equip.dateTimeOn;
+                                }
+                                this.labService.updateSimulacao(
+                                  this.simulacao,
+                                  this.simulacao.key
+                                );
+                              }
+                            } else {
+                              s.equipDateOn.push(equip.dateTimeOn);
+                              this.labService.updateSimulacao(
+                                this.simulacao,
+                                this.simulacao.key
+                              );
+                            }
+                          }
+                        }
                       } else if (probabilidade === 0 && equip.estado === "on") {
                         equip.estado = "off";
-                        lab.consumo-=(equip.potencia/1000)
-                        var consumo2=0;
-                        consumo2=lab.consumo;
-                        lab.consumo=Number(consumo2.toFixed(2))
-                        this.labService.update(lab,lab.key)
+                        lab.consumo -= equip.potencia / 1000;
+                        var consumo2 = 0;
+                        consumo2 = lab.consumo;
+                        lab.consumo = Number(consumo2.toFixed(2));
+                        this.labService.update(lab, lab.key);
 
                         if (this.simulacao.estadoSimulacao === true) {
                           var log: Log = {
@@ -301,21 +345,57 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
                       ) {
                         equip.estado = "on";
                         equip.dateTimeOn = new Date().toLocaleString();
-                        lab.consumo+=(equip.potencia/1000)
-                        var consumo3=0;
-                        consumo3=lab.consumo;
-                        lab.consumo=Number(consumo3.toFixed(2))
-                        this.labService.update(lab,lab.key)
+                        lab.consumo += equip.potencia / 1000;
+                        var consumo3 = 0;
+                        consumo3 = lab.consumo;
+                        lab.consumo = Number(consumo3.toFixed(2));
+                        this.labService.update(lab, lab.key);
+
+                        for (var s of this.simulacao.snapshotLabs) {
+                          if (
+                            lab.nome === s.nomeLab &&
+                            equip.id === s.equip.id
+                          ) {
+                            var achou2 = s.equipDateOn.filter(
+                              (item) =>
+                                item.slice(0, 10) ===
+                                equip.dateTimeOn.slice(0, 10)
+                            );
+
+                            if (achou2) {
+                              s.equipDateOn.forEach((x2) => {
+                                if (
+                                  x2.slice(0, 10) ===
+                                  equip.dateTimeOn.slice(0, 10)
+                                ) {
+                                  s.equipDateOn[s.equipDateOn.indexOf(x2)] =
+                                    equip.dateTimeOn;
+
+                                  this.labService.updateSimulacao(
+                                    this.simulacao,
+                                    this.simulacao.key
+                                  );
+                                }
+                              });
+                            } else {
+                              s.equipDateOn.push(equip.dateTimeOn);
+                              this.labService.updateSimulacao(
+                                this.simulacao,
+                                this.simulacao.key
+                              );
+                            }
+                          }
+                        }
                       } else if (
                         monteCarlo > probabilidade &&
                         equip.estado === "on"
                       ) {
                         equip.estado = "off";
-                        lab.consumo-=(equip.potencia/1000)
-                        var consumo4=0;
-                        consumo4=lab.consumo;
-                        lab.consumo=Number(consumo4.toFixed(2))
-                        this.labService.update(lab,lab.key)
+                        lab.consumo -= equip.potencia / 1000;
+                        var consumo4 = 0;
+                        consumo4 = lab.consumo;
+                        lab.consumo = Number(consumo4.toFixed(2));
+                        this.labService.update(lab, lab.key);
 
                         if (this.simulacao.estadoSimulacao === true) {
                           var log2: Log = {
@@ -371,39 +451,35 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
                          (mudança de estado do equipamento ou não) */
                     if (equip.estado === "off" && probabilidade === 1) {
                       equip.estado = "on";
-                      lab.consumo+=(equip.potencia/1000)
-                      var consumo5=0;
-                        consumo5=lab.consumo;
-                        lab.consumo=Number(consumo5.toFixed(2))
-                      
+                      lab.consumo += equip.potencia / 1000;
+                      var consumo5 = 0;
+                      consumo5 = lab.consumo;
+                      lab.consumo = Number(consumo5.toFixed(2));
                     } else if (probabilidade === 0 && equip.estado === "on") {
                       equip.estado = "off";
-                      lab.consumo-=(equip.potencia/1000)
-                      var consumo6=0;
-                      consumo6=lab.consumo;
-                      lab.consumo=Number(consumo6.toFixed(2))
-                      
+                      lab.consumo -= equip.potencia / 1000;
+                      var consumo6 = 0;
+                      consumo6 = lab.consumo;
+                      lab.consumo = Number(consumo6.toFixed(2));
                     } else if (
                       monteCarlo < probabilidade &&
                       equip.estado === "off" &&
                       probabilidade > 0
                     ) {
                       equip.estado = "on";
-                      lab.consumo+=(equip.potencia/1000)
-                      var consumo7=0;
-                        consumo7=lab.consumo;
-                        lab.consumo=Number(consumo7.toFixed(2))
-                    
+                      lab.consumo += equip.potencia / 1000;
+                      var consumo7 = 0;
+                      consumo7 = lab.consumo;
+                      lab.consumo = Number(consumo7.toFixed(2));
                     } else if (
                       monteCarlo > probabilidade &&
                       equip.estado === "on"
                     ) {
                       equip.estado = "off";
-                      lab.consumo-=(equip.potencia/1000)
-                      var consumo8=0;
-                        consumo8=lab.consumo;
-                        lab.consumo=Number(consumo8.toFixed(2))
-                      
+                      lab.consumo -= equip.potencia / 1000;
+                      var consumo8 = 0;
+                      consumo8 = lab.consumo;
+                      lab.consumo = Number(consumo8.toFixed(2));
                     }
                   }
                 });
