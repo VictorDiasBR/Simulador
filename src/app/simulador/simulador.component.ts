@@ -241,11 +241,13 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
           if (this.count1 === 1) {
             l.forEach((lab1) => {
               lab1.equips.forEach((equip1) => {
-                if (this.count1 === 1) {
+                
                   if (equip1.estado === "on") {
                     equip1.dateTimeOn = new Date().toLocaleString();
                     for (var s3 of this.simulacao.snapshotLabs) {
-                      if (l.nome === s3.nomeLab && equip1.id === s3.equip.id) {
+                     
+                      if(lab1.nome===s3.nomeLab&&equip1.id===s3.equip.id){
+                        
                         var achou3 = s3.equipDateOn.filter(
                           (item) =>
                             item.slice(0, 10) === equip1.dateTimeOn.slice(0, 10)
@@ -262,7 +264,7 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
                   } else {
                     equip1.dateTimeOn = "*";
                   }
-                }
+                
               });
               this.labService.update(lab1, lab1.key);
             });
@@ -378,9 +380,9 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
                                 item.slice(0, 10) ===
                                 equip.dateTimeOn.slice(0, 10)
                             );
-                            console.log(achou2);
+                            
                             if (achou2.length > 0) {
-                              console.log("in" + s.equip.id);
+                              
                               s.equipDateOn.forEach((x2) => {
                                 if (
                                   x2.slice(0, 10) ===
@@ -396,7 +398,7 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
                                 }
                               });
                             } else {
-                              console.log("id " + s.equip.id);
+                              
                               s.equipDateOn.push(equip.dateTimeOn);
                               this.labService.updateSimulacao(
                                 this.simulacao,
