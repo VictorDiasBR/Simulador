@@ -243,7 +243,22 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
               lab1.equips.forEach((equip1) => {
                 if (this.count1 === 1) {
                   if (equip1.estado === "on") {
-                    equip1.dateTimeOn = this.simulacao.dateTimeInicio;
+                    equip1.dateTimeOn = new Date().toLocaleString();
+                    for (var s3 of this.simulacao.snapshotLabs) {
+                      if (l.nome === s3.nomeLab && equip1.id === s3.equip.id) {
+                        var achou3 = s3.equipDateOn.filter(
+                          (item) =>
+                            item.slice(0, 10) === equip1.dateTimeOn.slice(0, 10)
+                        );
+                        if (achou3.length === 0) {
+                          s3.equipDateOn.push(equip1.dateTimeOn);
+                          this.labService.updateSimulacao(
+                            this.simulacao,
+                            this.simulacao.key
+                          );
+                        }
+                      }
+                    }
                   } else {
                     equip1.dateTimeOn = "*";
                   }
@@ -283,32 +298,34 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
                         consumo1 = lab.consumo;
                         lab.consumo = Number(consumo1.toFixed(2));
                         this.labService.update(lab, lab.key);
-                        for (const s of this.simulacao.snapshotLabs) {
+                        for (var s1 of this.simulacao.snapshotLabs) {
                           if (
-                            lab.nome === s.nomeLab &&
-                            equip.id === s.equip.id
+                            lab.nome === s1.nomeLab &&
+                            equip.id === s1.equip.id
                           ) {
-                            var achou = s.equipDateOn.filter(
+                            var achou = s1.equipDateOn.filter(
                               (item) =>
                                 item.slice(0, 10) ===
                                 equip.dateTimeOn.slice(0, 10)
                             );
 
                             if (achou) {
-                              for (var x of s.equipDateOn) {
+                              s1.equipDateOn.forEach((x2) => {
                                 if (
-                                  x.slice(0, 10) ===
+                                  x2.slice(0, 10) ===
                                   equip.dateTimeOn.slice(0, 10)
                                 ) {
-                                  x = equip.dateTimeOn;
+                                  s1.equipDateOn[s1.equipDateOn.indexOf(x2)] =
+                                    equip.dateTimeOn;
+
+                                  this.labService.updateSimulacao(
+                                    this.simulacao,
+                                    this.simulacao.key
+                                  );
                                 }
-                                this.labService.updateSimulacao(
-                                  this.simulacao,
-                                  this.simulacao.key
-                                );
-                              }
+                              });
                             } else {
-                              s.equipDateOn.push(equip.dateTimeOn);
+                              s1.equipDateOn.push(equip.dateTimeOn);
                               this.labService.updateSimulacao(
                                 this.simulacao,
                                 this.simulacao.key
@@ -361,8 +378,9 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
                                 item.slice(0, 10) ===
                                 equip.dateTimeOn.slice(0, 10)
                             );
-
-                            if (achou2) {
+                            console.log(achou2);
+                            if (achou2.length > 0) {
+                              console.log("in" + s.equip.id);
                               s.equipDateOn.forEach((x2) => {
                                 if (
                                   x2.slice(0, 10) ===
@@ -378,6 +396,7 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
                                 }
                               });
                             } else {
+                              console.log("id " + s.equip.id);
                               s.equipDateOn.push(equip.dateTimeOn);
                               this.labService.updateSimulacao(
                                 this.simulacao,
