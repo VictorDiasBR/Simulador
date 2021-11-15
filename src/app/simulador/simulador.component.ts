@@ -35,6 +35,7 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
   listaRegras: Regra[] = [];
   simulacoes: Observable<any>;
   simulacao: any;
+  simulacaoEstatica: any;
   horas: number = 0;
   minutos: number = 0;
   segundos: number = 0;
@@ -241,30 +242,27 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
           if (this.count1 === 1) {
             l.forEach((lab1) => {
               lab1.equips.forEach((equip1) => {
-                
-                  if (equip1.estado === "on") {
-                    equip1.dateTimeOn = new Date().toLocaleString();
-                    for (var s3 of this.simulacao.snapshotLabs) {
-                     
-                      if(lab1.nome===s3.nomeLab&&equip1.id===s3.equip.id){
-                        
-                        var achou3 = s3.equipDateOn.filter(
-                          (item) =>
-                            item.slice(0, 10) === equip1.dateTimeOn.slice(0, 10)
+                if (equip1.estado === "on") {
+                  equip1.dateTimeOn = new Date().toLocaleString();
+
+                  for (var s3 of this.simulacao.snapshotLabs) {
+                    if (lab1.nome === s3.nomeLab && equip1.id === s3.equip.id) {
+                      var achou3 = s3.equipDateOn.filter(
+                        (item) =>
+                          item.slice(0, 10) === equip1.dateTimeOn.slice(0, 10)
+                      );
+                      if (achou3.length === 0) {
+                        s3.equipDateOn.push(equip1.dateTimeOn);
+                        this.labService.updateSimulacao(
+                          this.simulacao,
+                          this.simulacao.key
                         );
-                        if (achou3.length === 0) {
-                          s3.equipDateOn.push(equip1.dateTimeOn);
-                          this.labService.updateSimulacao(
-                            this.simulacao,
-                            this.simulacao.key
-                          );
-                        }
                       }
                     }
-                  } else {
-                    equip1.dateTimeOn = "*";
                   }
-                
+                } else {
+                  equip1.dateTimeOn = "*";
+                }
               });
               this.labService.update(lab1, lab1.key);
             });
@@ -380,9 +378,8 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
                                 item.slice(0, 10) ===
                                 equip.dateTimeOn.slice(0, 10)
                             );
-                            
+
                             if (achou2.length > 0) {
-                              
                               s.equipDateOn.forEach((x2) => {
                                 if (
                                   x2.slice(0, 10) ===
@@ -398,7 +395,6 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
                                 }
                               });
                             } else {
-                              
                               s.equipDateOn.push(equip.dateTimeOn);
                               this.labService.updateSimulacao(
                                 this.simulacao,
@@ -445,71 +441,322 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
   }
   setarDatetimeEquips(dateTimeOn: string) {}
   iniciarSimulacaoEstatica() {
-    var count = 0;
-    /* nvl 1 - percorrer labs */
+   
+
+    var log: Log = {
+      inicioSimulacao: new Date().toLocaleString()
+    };
+    var logs: Log[] = [];
+    logs.push(log);
+
+    var dataInicio = this.dataSimulacao.periodo.inicio.toLocaleDateString(
+      "pt-BR",
+      {
+        timeZone: "UTC"
+      }
+    );
+    var dataFim = this.dataSimulacao.periodo.fim.toLocaleDateString("pt-BR", {
+      timeZone: "UTC"
+    });
+
+    
+    var simulacao: Simulacao = {
+      estadoSimulacao: true,
+      titulo: this.dataSimulacao.dados.nome,
+      descricao: this.dataSimulacao.dados.descricao,
+      modalidadeTempo: this.dataSimulacao.tipo.tipo,
+      modelo: this.dataSimulacao.modelo.modelo,
+      snapshotLabs: this.listaSnapshots,
+      regras: this.listaRegras,
+      dateTimeInicio: new Date().toLocaleString(),
+      log: logs,
+      pInicio: dataInicio,
+      pFim: dataFim
+    };
+    var countS =0;
+    this.labService.insertSimulacao(simulacao);
+    this.simulacoes.forEach((element) => {
+      countS++;
+      if (countS === 1) {
+        element.forEach((simulacao) => {
+          if (
+            simulacao.estadoSimulacao === true &&
+            simulacao.modelo !== "dinamica"
+          ) {
+           
+            console.log(simulacao.pInicio);
+            console.log(simulacao.pFim);
+            var dias =
+              Math.abs(
+                new Date(
+                  simulacao.pInicio.slice(6, 10),
+                  simulacao.pInicio.slice(3, 5),
+                  simulacao.pInicio.slice(0, 2),
+                  simulacao.pInicio.slice(11, 13),
+                  simulacao.pInicio.slice(14, 16),
+                  simulacao.pInicio.slice(17, 19)
+                ).getDate() -
+                  new Date(
+                    simulacao.pFim.slice(6, 10),
+                    simulacao.pFim.slice(3, 5),
+                    simulacao.pFim.slice(0, 2),
+                    simulacao.pFim.slice(11, 13),
+                    simulacao.pFim.slice(14, 16),
+                    simulacao.pFim.slice(17, 19)
+                  ).getDate()
+              ) + 1;
+            console.log(dias);
+            /* nvl 1 - percorrer dias do período selecionado pelo usuário */
+            for (let indexDia = 1; indexDia <= dias; indexDia++) {
+              console.log(indexDia);
+              /* nvl 2 - percorrer horas do dia */
+              for (let indexHora = 1; indexHora <= 24; indexHora++) {
+                /* nvl 2.5 - processar somente horário de expediente */
+                if (indexHora >= 7 && indexHora <= 22) {
+                  /* nvl 3 - percorrer minutos da hora */
+                  for (let indexMin = 1; indexMin <= 60; indexMin++) {
+                    /* nvl 4 - percorrer labs */
+                   this.processar(simulacao,indexDia,indexHora,indexMin);
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+    });
+  }
+  processar(simulacao:any,indexDia,indexHora,indexMin){
+    console.log(indexDia +" | "+indexHora+" | "+ indexMin)
+   
     this.labs.forEach((element) => {
-      count++;
-      if (count === 1) {
+      console.log("xd")
         element.forEach((lab) => {
-          /* nvl 2 - percorrer regras */
+          /* nvl 5 - percorrer regras */
           this.regras.forEach((element) => {
             element.forEach((regra) => {
-              /* nvl 3 - filtrar regra lab */
-
+              /* nvl 6 - filtrar regra lab */
+console.log(regra)
               if (
                 regra.laboratorio === lab.nome &&
                 regra.estadoLab === lab.aula
               ) {
-                /* nvl 4 - percorrer equipamentos do lab */
+                /* nvl 7 - percorrer equipamentos do lab */
                 lab.equips.forEach((equip) => {
-                  /* nvl 5 - filtrar equipamentos da regra */
+                  /* nvl 8 - filtrar equipamentos da regra */
                   if (regra.equipamento === equip.nome) {
-                    /* nvl 6 - gerar número aleatório */
+                    console.log(equip.nome)
+                    /* nvl 9 - gerar número aleatório */
                     var monteCarlo = this.monteCarlo();
-                    /* nvl 6.1 - converter probabilidade para decimal */
+                    /* nvl 9.1 - converter probabilidade para decimal */
                     var probabilidade = regra.probEquip / 100;
-                    /* nvl 7 - processo decisório 
-                         (mudança de estado do equipamento ou não) */
-                    if (equip.estado === "off" && probabilidade === 1) {
+                    /* nvl 10 - processo decisório 
+   (mudança de estado do equipamento ou não) */
+                    if (
+                      equip.estado === "off" &&
+                      probabilidade === 1
+                    ) {
                       equip.estado = "on";
+
+                      equip.dateTimeOn = new Date()
+                        .setDate(
+                          new Date(
+                            simulacao.pInicio.slice(6, 10),
+                            simulacao.pInicio.slice(3, 5),
+                            simulacao.pInicio.slice(0, 2),
+                            indexHora,
+                            indexMin,
+                            0
+                          ).getDate() + indexDia
+                        )
+                        .toLocaleString();
                       lab.consumo += equip.potencia / 1000;
-                      var consumo5 = 0;
-                      consumo5 = lab.consumo;
-                      lab.consumo = Number(consumo5.toFixed(2));
-                    } else if (probabilidade === 0 && equip.estado === "on") {
+                      var consumo1 = 0;
+                      consumo1 = lab.consumo;
+                      lab.consumo = Number(consumo1.toFixed(2));
+                      this.labService.update(lab, lab.key);
+                      for (var s1 of simulacao.snapshotLabs) {
+                        if (
+                          lab.nome === s1.nomeLab &&
+                          equip.id === s1.equip.id
+                        ) {
+                          var achou = s1.equipDateOn.filter(
+                            (item) =>
+                              item.slice(0, 10) ===
+                              equip.dateTimeOn.slice(0, 10)
+                          );
+
+                          if (achou) {
+                            s1.equipDateOn.forEach((x2) => {
+                              if (
+                                x2.slice(0, 10) ===
+                                equip.dateTimeOn.slice(0, 10)
+                              ) {
+                                s1.equipDateOn[
+                                  s1.equipDateOn.indexOf(x2)
+                                ] = equip.dateTimeOn;
+
+                                this.labService.updateSimulacao(
+                                  simulacao,
+                                  simulacao.key
+                                );
+                              }
+                            });
+                          } else {
+                            s1.equipDateOn.push(
+                              equip.dateTimeOn
+                            );
+                            this.labService.updateSimulacao(
+                              simulacao,
+                              simulacao.key
+                            );
+                          }
+                        }
+                      }
+                    } else if (
+                      probabilidade === 0 &&
+                      equip.estado === "on"
+                    ) {
                       equip.estado = "off";
                       lab.consumo -= equip.potencia / 1000;
-                      var consumo6 = 0;
-                      consumo6 = lab.consumo;
-                      lab.consumo = Number(consumo6.toFixed(2));
+                      var consumo2 = 0;
+                      consumo2 = lab.consumo;
+                      lab.consumo = Number(consumo2.toFixed(2));
+                      this.labService.update(lab, lab.key);
+
+                      if (simulacao.estadoSimulacao === true) {
+                        var log: Log = {
+                          labNome: lab.nome,
+                          equipamento: equip,
+                          dateTimeOn: equip.dateTimeOn,
+                          dateTimeOff: new Date()
+                            .setDate(
+                              new Date(
+                                simulacao.pInicio.slice(6, 10),
+                                simulacao.pInicio.slice(3, 5),
+                                simulacao.pInicio.slice(0, 2),
+                                indexHora,
+                                indexMin,
+                                0
+                              ).getDate() + indexDia
+                            )
+                            .toLocaleString()
+                        };
+
+                        simulacao.log.push(log);
+                        this.labService.updateSimulacao(
+                          simulacao,
+                          simulacao.key
+                        );
+                      }
                     } else if (
                       monteCarlo < probabilidade &&
                       equip.estado === "off" &&
                       probabilidade > 0
                     ) {
+                      console.log("equip ligado"+equip)
                       equip.estado = "on";
+                      equip.dateTimeOn = new Date()
+                        .setDate(
+                          new Date(
+                            simulacao.pInicio.slice(6, 10),
+                            simulacao.pInicio.slice(3, 5),
+                            simulacao.pInicio.slice(0, 2),
+                            indexHora,
+                            indexMin,
+                            0
+                          ).getDate() + indexDia
+                        )
+                        .toLocaleString();
                       lab.consumo += equip.potencia / 1000;
-                      var consumo7 = 0;
-                      consumo7 = lab.consumo;
-                      lab.consumo = Number(consumo7.toFixed(2));
+                      var consumo3 = 0;
+                      consumo3 = lab.consumo;
+                      lab.consumo = Number(consumo3.toFixed(2));
+                      this.labService.update(lab, lab.key);
+
+                      for (var s of simulacao.snapshotLabs) {
+                        if (
+                          lab.nome === s.nomeLab &&
+                          equip.id === s.equip.id
+                        ) {
+                          var achou2 = s.equipDateOn.filter(
+                            (item) =>
+                              item.slice(0, 10) ===
+                              equip.dateTimeOn.slice(0, 10)
+                          );
+
+                          if (achou2.length > 0) {
+                            s.equipDateOn.forEach((x2) => {
+                              if (
+                                x2.slice(0, 10) ===
+                                equip.dateTimeOn.slice(0, 10)
+                              ) {
+                                s.equipDateOn[
+                                  s.equipDateOn.indexOf(x2)
+                                ] = equip.dateTimeOn;
+
+                                this.labService.updateSimulacao(
+                                  simulacao,
+                                  simulacao.key
+                                );
+                              }
+                            });
+                          } else {
+                            s.equipDateOn.push(
+                              equip.dateTimeOn
+                            );
+                            this.labService.updateSimulacao(
+                              simulacao,
+                              simulacao.key
+                            );
+                          }
+                        }
+                      }
                     } else if (
                       monteCarlo > probabilidade &&
                       equip.estado === "on"
                     ) {
+                      console.log("equip desligado"+equip)
                       equip.estado = "off";
                       lab.consumo -= equip.potencia / 1000;
-                      var consumo8 = 0;
-                      consumo8 = lab.consumo;
-                      lab.consumo = Number(consumo8.toFixed(2));
+                      var consumo4 = 0;
+                      consumo4 = lab.consumo;
+                      lab.consumo = Number(consumo4.toFixed(2));
+                      this.labService.update(lab, lab.key);
+
+                      if (simulacao.estadoSimulacao === true) {
+                        var log2: Log = {
+                          labNome: lab.nome,
+                          equipamento: equip,
+                          dateTimeOn: equip.dateTimeOn,
+                          dateTimeOff: new Date()
+                            .setDate(
+                              new Date(
+                                simulacao.pInicio.slice(6, 10),
+                                simulacao.pInicio.slice(3, 5),
+                                simulacao.pInicio.slice(0, 2),
+                                indexHora,
+                                indexMin,
+                                0
+                              ).getDate() + indexDia
+                            )
+                            .toLocaleString()
+                        };
+
+                        simulacao.log.push(log2);
+                        this.labService.updateSimulacao(
+                          simulacao,
+                          simulacao.key
+                        );
+                      }
                     }
                   }
                 });
-                this.labService.update(lab, lab.key);
               }
             });
           });
         });
-      }
+      
     });
   }
   pausarSimulacao() {

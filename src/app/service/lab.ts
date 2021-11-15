@@ -4,7 +4,7 @@ export class Equip {
   tipo: string;
   estado: string;
   potencia: number;
-  dateTimeOn:string;
+  dateTimeOn: string;
 }
 export class Lab {
   nome: string;
@@ -20,7 +20,7 @@ export class Regra {
   probEquip: number;
 }
 export class Log {
-  labNome?:string;
+  labNome?: string;
   equipamento?: any;
   dateTimeOn?: string;
   dateTimeOff?: string;
@@ -36,5 +36,6 @@ export class Simulacao {
   regras: Regra[];
   log: Log[];
   dateTimeInicio: string;
-  periodo?: string;
+  pInicio?: string;
+  pFim?: string;
 }
