@@ -441,21 +441,24 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
   }
   setarDatetimeEquips(dateTimeOn: string) {}
   iniciarSimulacaoEstatica() {
-   
+    var count1=0;
 
+
+      
+    
     var log: Log = {
       inicioSimulacao: new Date().toLocaleString()
     };
     var logs: Log[] = [];
     logs.push(log);
 
-    var dataInicio = this.dataSimulacao.periodo.inicio.toLocaleDateString(
+    var dataInicio = this.dataSimulacao.periodo.inicio.toLocaleString(
       "pt-BR",
       {
         timeZone: "UTC"
       }
     );
-    var dataFim = this.dataSimulacao.periodo.fim.toLocaleDateString("pt-BR", {
+    var dataFim = this.dataSimulacao.periodo.fim.toLocaleString("pt-BR", {
       timeZone: "UTC"
     });
 
@@ -505,7 +508,22 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
                     simulacao.pFim.slice(17, 19)
                   ).getDate()
               ) + 1;
-            console.log(dias);
+              this.labs.forEach((l) => {
+                count1++;
+                if (count1 === 1) {
+                  l.forEach((lab1) => {
+                    lab1.equips.forEach((equip1) => {
+                      if (equip1.estado === "on") {
+                        equip1.dateTimeOn = simulacao.pInicio;
+        
+                      } else {
+                        equip1.dateTimeOn = "*";
+                      }
+                    });
+                    this.labService.update(lab1, lab1.key);
+                  });
+                }
+              });
             /* nvl 1 - percorrer dias do período selecionado pelo usuário */
             for (let indexDia = 1; indexDia <= dias; indexDia++) {
               console.log(indexDia);
@@ -527,16 +545,18 @@ export class SimulacaoTRD implements OnInit, AfterViewInit {
     });
   }
   processar(simulacao:any,indexDia,indexHora,indexMin){
-    console.log(indexDia +" | "+indexHora+" | "+ indexMin)
-   
+
+   var count =0;
     this.labs.forEach((element) => {
       console.log("xd")
+      count++;
+      if (count === 1) {
         element.forEach((lab) => {
           /* nvl 5 - percorrer regras */
           this.regras.forEach((element) => {
             element.forEach((regra) => {
               /* nvl 6 - filtrar regra lab */
-console.log(regra)
+
               if (
                 regra.laboratorio === lab.nome &&
                 regra.estadoLab === lab.aula
@@ -557,19 +577,15 @@ console.log(regra)
                       probabilidade === 1
                     ) {
                       equip.estado = "on";
-
-                      equip.dateTimeOn = new Date()
-                        .setDate(
-                          new Date(
-                            simulacao.pInicio.slice(6, 10),
-                            simulacao.pInicio.slice(3, 5),
-                            simulacao.pInicio.slice(0, 2),
-                            indexHora,
-                            indexMin,
-                            0
-                          ).getDate() + indexDia
-                        )
-                        .toLocaleString();
+                      var d1 =new Date();
+                      d1.setDate(new Date( 
+                      simulacao.pInicio.slice(6, 10),
+                      simulacao.pInicio.slice(3, 5),
+                      simulacao.pInicio.slice(0, 2),
+                      indexHora,
+                      indexMin,
+                      0).getDate()+indexDia)
+                      equip.dateTimeOn = d1.toLocaleString();
                       lab.consumo += equip.potencia / 1000;
                       var consumo1 = 0;
                       consumo1 = lab.consumo;
@@ -625,22 +641,20 @@ console.log(regra)
                       this.labService.update(lab, lab.key);
 
                       if (simulacao.estadoSimulacao === true) {
+                        var d3 =new Date();
+                        d3.setDate(new Date( 
+                        simulacao.pInicio.slice(6, 10),
+                        simulacao.pInicio.slice(3, 5),
+                        simulacao.pInicio.slice(0, 2),
+                        indexHora,
+                        indexMin,
+                        0).getDate()+indexDia)
+                       ;
                         var log: Log = {
                           labNome: lab.nome,
                           equipamento: equip,
                           dateTimeOn: equip.dateTimeOn,
-                          dateTimeOff: new Date()
-                            .setDate(
-                              new Date(
-                                simulacao.pInicio.slice(6, 10),
-                                simulacao.pInicio.slice(3, 5),
-                                simulacao.pInicio.slice(0, 2),
-                                indexHora,
-                                indexMin,
-                                0
-                              ).getDate() + indexDia
-                            )
-                            .toLocaleString()
+                          dateTimeOff: d3.toLocaleString()
                         };
 
                         simulacao.log.push(log);
@@ -656,18 +670,15 @@ console.log(regra)
                     ) {
                       console.log("equip ligado"+equip)
                       equip.estado = "on";
-                      equip.dateTimeOn = new Date()
-                        .setDate(
-                          new Date(
-                            simulacao.pInicio.slice(6, 10),
-                            simulacao.pInicio.slice(3, 5),
-                            simulacao.pInicio.slice(0, 2),
-                            indexHora,
-                            indexMin,
-                            0
-                          ).getDate() + indexDia
-                        )
-                        .toLocaleString();
+                      var d2 =new Date();
+                      d2.setDate(new Date( 
+                      simulacao.pInicio.slice(6, 10),
+                      simulacao.pInicio.slice(3, 5),
+                      simulacao.pInicio.slice(0, 2),
+                      indexHora,
+                      indexMin,
+                      0).getDate()+indexDia)
+                      equip.dateTimeOn = d2.toLocaleString();
                       lab.consumo += equip.potencia / 1000;
                       var consumo3 = 0;
                       consumo3 = lab.consumo;
@@ -725,22 +736,20 @@ console.log(regra)
                       this.labService.update(lab, lab.key);
 
                       if (simulacao.estadoSimulacao === true) {
+                        var d4 =new Date();
+                        d4.setDate(new Date( 
+                        simulacao.pInicio.slice(6, 10),
+                        simulacao.pInicio.slice(3, 5),
+                        simulacao.pInicio.slice(0, 2),
+                        indexHora,
+                        indexMin,
+                        0).getDate()+indexDia)
+                       ;
                         var log2: Log = {
                           labNome: lab.nome,
                           equipamento: equip,
                           dateTimeOn: equip.dateTimeOn,
-                          dateTimeOff: new Date()
-                            .setDate(
-                              new Date(
-                                simulacao.pInicio.slice(6, 10),
-                                simulacao.pInicio.slice(3, 5),
-                                simulacao.pInicio.slice(0, 2),
-                                indexHora,
-                                indexMin,
-                                0
-                              ).getDate() + indexDia
-                            )
-                            .toLocaleString()
+                          dateTimeOff: d4.toLocaleString()
                         };
 
                         simulacao.log.push(log2);
@@ -756,7 +765,7 @@ console.log(regra)
             });
           });
         });
-      
+    }
     });
   }
   pausarSimulacao() {
